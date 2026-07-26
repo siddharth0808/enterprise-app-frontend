@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Enterprise App",
+    "slug": "enterprise-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "splash": { "backgroundColor": "#ffffff" },
+    "plugins": ["expo-image-picker"],
+    "ios": { 
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to select product images",
+        "NSPhotoLibraryAddOnlyUsageDescription": "This app needs permission to save images"
+      }
+    },
+    "android": { 
+      "package": "com.example.enterpriseapp",
+      "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
+    },
+    "web": { "bundler": "metro" }
+  }
+}
