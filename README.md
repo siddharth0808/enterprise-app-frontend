@@ -1,55 +1,89 @@
-# Enterprise app — Expo (owner side)
+# InventoryFlow (Web)
 
-Ports the "app" module (`com.example.enterprise`) from the original Android project:
-login, register, add  product, view/advance orders — talking to the CDK backend
-(`enterprise-app-backend`) over HTTPS with a Cognito JWT on every request.
+A React + TypeScript port of the `enterprise-app-frontend` React Native app, rebuilt as a
+responsive web app and restyled to match the InventoryFlow Figma design.
 
-## Setup
+## Stack
+
+- **React 19 + TypeScript**, built with **Vite**
+- **React Router v6** for routing and route guards
+- **Redux Toolkit** for state (auth, business, inventory)
+- **styled-components** for styling, theme tokens taken from Figma
+- **Amazon Cognito** (`amazon-cognito-identity-js`) for authentication
+
+## Getting started
 
 ```bash
 npm install
+cp .env.example .env   # then fill in your real API/Cognito values
+npm run dev
 ```
 
-Fill in `src/config/env.ts` with the three CDK outputs from `enterprise-app-backend`:
-- `UserPoolId` -> `USER_POOL_ID`
-- `UserPoolClientId` -> `USER_POOL_CLIENT_ID`
-- `ApiUrl` -> `API_BASE_URL`
-
-Then:
+Other scripts:
 
 ```bash
-npx expo start
+npm run build     # type-check + production build
+npm run lint      # oxlint
+npm run preview   # preview the production build locally
 ```
 
-## How auth flows through the app
+## Environment variables
 
-1. `RegisterScreen` calls Cognito directly (`amazon-cognito-identity-js`) to create
-   the account and confirm the SMS code — no backend call yet.
-2. After confirmation, it signs in (getting a JWT) and calls `POST /register` to
-   write the canteen profile row into DynamoDB.
-3. `LoginScreen` calls Cognito's `authenticateUser`, which returns a session
-   containing the JWT id token.
-4. `AuthContext` holds sign-in state and exposes `ownerId` (decoded from the JWT's
-   `sub` claim) to every screen.
-5. `api/client.ts` attaches `Authorization: Bearer <idToken>` to every request —
-   API Gateway's Cognito JWT authorizer validates it before Lambda ever runs.
+All configuration lives in `.env` (see `.env.example`). The app fails fast at startup with a
+clear error if any of these are missing - nothing is hardcoded in source:
 
-## What's stubbed vs. built out
+| Variable | Purpose |
+| --- | --- |
+| `VITE_API_BASE_URL` | Base URL of the backend REST API |
+| `VITE_AWS_REGION` | AWS region for the Cognito User Pool |
+| `VITE_COGNITO_USER_POOL_ID` | Cognito User Pool ID |
+| `VITE_COGNITO_USER_POOL_CLIENT_ID` | Cognito App Client ID |
 
-- **Built**: Login, Register (with SMS confirmation),  Products + Add product, Orders
-  list + status advance (Placed → Preparing → Shipped)
-- **Stubbed**: image upload on Add Item — the presign endpoint
-  (`presignImageUpload` in `api/endpoints.ts`) is ready, just needs
-  `expo-image-picker` wired in to actually pick and PUT a file
-- **Not started**: the customer-facing ordering flow (browse products → cart → place
-  order → track status) — the original `enterprise` module was still
-  boilerplate, so this needs building from scratch using the same `endpoints.ts`
-  functions (`listProducts`, `placeOrder`)
+## Architecture
 
-## Next steps
+Feature-based structure under `src/`:
 
-- Wire up the customer app (new screens, same API client/auth context — just a
-  `role: 'customer'` sign-up instead of `'owner'`)
-- Add `expo-image-picker` + finish the image upload flow on Add Item
-- Add pull-to-refresh polling or a lightweight WebSocket for live order status
-  instead of manual refresh, if you want true real-time updates on the owner side
+```
+app/            store config, typed hooks, router + route guards
+components/     shared UI (common/) and app shell (layout/)
+config/         env + Cognito config (no literals outside this layer)
+features/
+  auth/         login, signup, email verification
+  business/     business setup + business Redux slice
+  inventory/    inventory list, add product
+  profile/      profile page (account + editable business info)
+services/
+  api/          single fetch wrapper (apiClient) + normalized ApiError
+  cognito/      the only module that imports the Cognito SDK directly
+styles/         theme tokens, breakpoints, global styles
+utils/          validation + formatting helpers
+```
+
+Pages never call `fetch` or the Cognito SDK directly - they dispatch Redux thunks, which call
+a feature's repository/service, which calls `apiClient` or `cognito.service`. This keeps the
+UI layer free of transport/auth details and makes both easy to swap later.
+
+### Route guards
+
+- `PublicRoute` - Login/Signup/Verify Email; redirects signed-in users onward.
+- `AuthenticatedRoute` - requires a signed-in user; shows a loader while the session is being
+  restored at startup.
+- `BusinessSetupRoute` - requires both auth **and** a completed Business Setup (Inventory,
+  Add Product, Profile); redirects to `/business-setup` otherwise.
+
+### Sign out
+
+Sign out dispatches a single `resetApplicationState` action (see `app/store/actions.ts`) that
+every feature slice listens for, so auth/business/inventory state is cleared together - no
+stale data can leak into the next session.
+
+## Notable changes from the original React Native app
+
+- **Auth switched from phone-number to email**, per the Figma designs (login/signup/verify
+  screens all use email). The Cognito wrapper (`services/cognito/cognito.service.ts`) uses
+  email as the Cognito username.
+- Navigation (`OwnerDrawer`/stack navigators) was replaced with React Router and a responsive
+  layout: a fixed sidebar on desktop/tablet, a bottom nav bar on mobile.
+- Screens were re-scoped to the MVP: Login, Signup, Email Verification, Business Setup,
+  Inventory List, Add Product, and Profile (business-info editing). Sales, Purchases,
+  Suppliers, and AI features from the original app are out of scope for this port.
