@@ -1,7 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import type { Product } from '../types/product.types';
 import { StatusBadge } from '../../../components/common/StatusBadge';
-import { formatCurrency, isLowStock } from '../../../utils/formatters';
+import { ActionsMenu } from '../../../components/common/ActionsMenu';
+import { formatCurrency } from '../../../utils/formatters';
+import { getStockStatusMeta } from '../utils/stockStatus';
 import { media } from '../../../styles/breakpoints';
 
 const CardList = styled.div`
@@ -23,6 +26,7 @@ const Card = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
+  cursor: pointer;
 `;
 
 const TopRow = styled.div`
@@ -36,6 +40,7 @@ const NameBlock = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 `;
 
 const Name = styled.p`
@@ -49,6 +54,13 @@ const Meta = styled.p`
   margin: 0;
   font-size: ${({ theme }) => theme.font.size.xs};
   color: ${({ theme }) => theme.colors.textMuted};
+`;
+
+const BadgeRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing(2)};
+  flex-shrink: 0;
 `;
 
 const DetailsGrid = styled.div`
@@ -80,12 +92,14 @@ interface ProductCardListProps {
 }
 
 export function ProductCardList({ products }: ProductCardListProps) {
+  const navigate = useNavigate();
+
   return (
     <CardList>
       {products.map((product) => {
-        const lowStock = isLowStock(product.currentStock, product.minimumStock);
+        const statusMeta = getStockStatusMeta(product.currentStock, product.minimumStock);
         return (
-          <Card key={product.id}>
+          <Card key={product.id} onClick={() => navigate(`/products/${product.id}`)}>
             <TopRow>
               <NameBlock>
                 <Name>{product.name}</Name>
@@ -93,7 +107,20 @@ export function ProductCardList({ products }: ProductCardListProps) {
                   {[product.sku, product.category, product.brand].filter(Boolean).join(' · ') || '—'}
                 </Meta>
               </NameBlock>
-              <StatusBadge tone={lowStock ? 'warning' : 'success'}>{product.currentStock} in stock</StatusBadge>
+              <BadgeRow>
+                <StatusBadge tone={statusMeta.tone}>{statusMeta.label}</StatusBadge>
+                <div onClick={(event) => event.stopPropagation()}>
+                  <ActionsMenu
+                    label={`Actions for ${product.name}`}
+                    items={[
+                      { label: 'View Details', onSelect: () => navigate(`/products/${product.id}`) },
+                      { label: 'Adjust Stock', onSelect: () => navigate(`/products/${product.id}/adjust-stock`) },
+                      { label: 'View History', onSelect: () => navigate(`/products/${product.id}/history`) },
+                      { label: 'Edit Product', onSelect: () => navigate(`/products/${product.id}/edit`) },
+                    ]}
+                  />
+                </div>
+              </BadgeRow>
             </TopRow>
             <DetailsGrid>
               <DetailItem>
@@ -103,6 +130,10 @@ export function ProductCardList({ products }: ProductCardListProps) {
               <DetailItem>
                 <DetailLabel>Cost Price</DetailLabel>
                 <DetailValue>{formatCurrency(product.costPrice)}</DetailValue>
+              </DetailItem>
+              <DetailItem>
+                <DetailLabel>Current Stock</DetailLabel>
+                <DetailValue>{product.currentStock}</DetailValue>
               </DetailItem>
               <DetailItem>
                 <DetailLabel>Min Stock</DetailLabel>

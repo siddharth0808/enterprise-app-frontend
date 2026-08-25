@@ -122,7 +122,7 @@ export default function ProfilePage() {
     <Content>
       <PageHeader title="Profile" subtitle="Manage your account and business information" />
 
-      {user && <AccountInfoCard email={user.email} />}
+      {user && <AccountInfoCard fullName= {user.fullName} email={user.email} />}
 
       <FormCard onSubmit={handleSubmit} noValidate>
         <SectionTitle>

@@ -9,8 +9,13 @@ import EmailVerificationPage from '../../features/auth/pages/EmailVerificationPa
 import BusinessSetupPage from '../../features/business/pages/BusinessSetupPage';
 import InventoryListPage from '../../features/inventory/pages/InventoryListPage';
 import AddProductPage from '../../features/inventory/pages/AddProductPage';
+
 import ProfilePage from '../../features/profile/pages/ProfilePage';
 import { useAppSelector } from '../store/hooks';
+import AdjustStockPage from '../../features/inventory/pages/AdjustStockPage';
+import EditProductPage from '../../features/inventory/pages/EditProductPage';
+import InventoryHistoryPage from '../../features/inventory/pages/InventoryHistoryPage';
+import ProductDetailsPage from '../../features/inventory/pages/ProductDetailsPage';
 
 /** Sends "/" to the right authenticated destination once we know it. */
 function RootRedirect() {
@@ -74,6 +79,46 @@ export function AppRouter() {
           <BusinessSetupRoute>
             <AppLayout>
               <AddProductPage />
+            </AppLayout>
+          </BusinessSetupRoute>
+        }
+      />
+      <Route
+        path="/products/:productId"
+        element={
+          <BusinessSetupRoute>
+            <AppLayout>
+              <ProductDetailsPage />
+            </AppLayout>
+          </BusinessSetupRoute>
+        }
+      />
+      <Route
+        path="/products/:productId/edit"
+        element={
+          <BusinessSetupRoute>
+            <AppLayout>
+              <EditProductPage />
+            </AppLayout>
+          </BusinessSetupRoute>
+        }
+      />
+      <Route
+        path="/products/:productId/adjust-stock"
+        element={
+          <BusinessSetupRoute>
+            <AppLayout>
+              <AdjustStockPage />
+            </AppLayout>
+          </BusinessSetupRoute>
+        }
+      />
+      <Route
+        path="/products/:productId/history"
+        element={
+          <BusinessSetupRoute>
+            <AppLayout>
+              <InventoryHistoryPage />
             </AppLayout>
           </BusinessSetupRoute>
         }

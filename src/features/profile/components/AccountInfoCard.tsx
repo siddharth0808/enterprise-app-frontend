@@ -33,7 +33,7 @@ const InfoBlock = styled.div`
   min-width: 0;
 `;
 
-const Email = styled.p`
+const FullName = styled.p`
   margin: 0;
   font-weight: ${({ theme }) => theme.font.weight.semibold};
   color: ${({ theme }) => theme.colors.textPrimary};
@@ -41,25 +41,27 @@ const Email = styled.p`
   text-overflow: ellipsis;
 `;
 
-const Label = styled.p`
+const Email = styled.p`
   margin: 0;
   font-size: ${({ theme }) => theme.font.size.xs};
   color: ${({ theme }) => theme.colors.textMuted};
 `;
 
 interface AccountInfoCardProps {
+  fullName:string
   email: string;
 }
 
-export function AccountInfoCard({ email }: AccountInfoCardProps) {
-  const initial = email.trim().charAt(0).toUpperCase() || '?';
+export function AccountInfoCard({ fullName, email }: AccountInfoCardProps) {
+  const name =  fullName.trim().split(' ');
+  const initial =  name[0].trim().charAt(0).toUpperCase() + name[1].trim().charAt(0).toUpperCase()
 
   return (
     <Card>
       <Avatar>{initial}</Avatar>
       <InfoBlock>
+        <FullName>{fullName}</FullName>
         <Email>{email}</Email>
-        <Label>Signed in with email</Label>
       </InfoBlock>
     </Card>
   );

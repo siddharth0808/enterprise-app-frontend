@@ -1,7 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import type { Product } from '../types/product.types';
 import { StatusBadge } from '../../../components/common/StatusBadge';
-import { formatCurrency, isLowStock } from '../../../utils/formatters';
+import { ActionsMenu } from '../../../components/common/ActionsMenu';
+import { formatCurrency } from '../../../utils/formatters';
+import { getStockStatusMeta } from '../utils/stockStatus';
 import { media } from '../../../styles/breakpoints';
 
 const TableWrapper = styled.div`
@@ -21,7 +24,7 @@ const TableWrapper = styled.div`
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
-  min-width: 900px;
+  min-width: 1080px;
 `;
 
 const Thead = styled.thead`
@@ -41,6 +44,12 @@ const Th = styled.th<{ $align?: 'left' | 'right' }>`
 `;
 
 const Tr = styled.tr`
+  cursor: pointer;
+
+  &:hover td {
+    background: ${({ theme }) => theme.colors.background};
+  }
+
   &:not(:last-child) td {
     border-bottom: 1px solid ${({ theme }) => theme.colors.border};
   }
@@ -63,7 +72,7 @@ const StrongPrice = styled(Td)`
   color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
-const BadgeCell = styled(Td)`
+const ActionsCell = styled(Td)`
   text-align: right;
 `;
 
@@ -72,36 +81,50 @@ interface ProductTableProps {
 }
 
 export function ProductTable({ products }: ProductTableProps) {
+  const navigate = useNavigate();
+
   return (
     <TableWrapper>
       <Table>
         <Thead>
-          <Tr>
-            <Th>Product Name</Th>
+          <tr>
+            <Th>Product</Th>
             <Th>SKU</Th>
             <Th>Category</Th>
-            <Th>Brand</Th>
             <Th $align="right">Selling Price</Th>
             <Th $align="right">Cost Price</Th>
-            <Th $align="right">Current Stock</Th>
+            <Th $align="right">Stock</Th>
             <Th $align="right">Min Stock</Th>
-          </Tr>
+            <Th>Status</Th>
+            <Th $align="right">Actions</Th>
+          </tr>
         </Thead>
         <tbody>
           {products.map((product) => {
-            const lowStock = isLowStock(product.currentStock, product.minimumStock);
+            const statusMeta = getStockStatusMeta(product.currentStock, product.minimumStock);
             return (
-              <Tr key={product.id}>
+              <Tr key={product.id} onClick={() => navigate(`/products/${product.id}`)}>
                 <ProductName>{product.name}</ProductName>
                 <Td>{product.sku || '—'}</Td>
                 <Td>{product.category || '—'}</Td>
-                <Td>{product.brand || '—'}</Td>
                 <StrongPrice $align="right">{formatCurrency(product.sellingPrice)}</StrongPrice>
                 <Td $align="right">{formatCurrency(product.costPrice)}</Td>
-                <BadgeCell>
-                  <StatusBadge tone={lowStock ? 'warning' : 'success'}>{product.currentStock}</StatusBadge>
-                </BadgeCell>
+                <Td $align="right">{product.currentStock}</Td>
                 <Td $align="right">{product.minimumStock}</Td>
+                <Td>
+                  <StatusBadge tone={statusMeta.tone}>{statusMeta.label}</StatusBadge>
+                </Td>
+                <ActionsCell onClick={(event) => event.stopPropagation()}>
+                  <ActionsMenu
+                    label={`Actions for ${product.name}`}
+                    items={[
+                      { label: 'View Details', onSelect: () => navigate(`/products/${product.id}`) },
+                      { label: 'Adjust Stock', onSelect: () => navigate(`/products/${product.id}/adjust-stock`) },
+                      { label: 'View History', onSelect: () => navigate(`/products/${product.id}/history`) },
+                      { label: 'Edit Product', onSelect: () => navigate(`/products/${product.id}/edit`) },
+                    ]}
+                  />
+                </ActionsCell>
               </Tr>
             );
           })}
