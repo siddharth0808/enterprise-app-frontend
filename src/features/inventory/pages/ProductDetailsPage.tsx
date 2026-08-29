@@ -48,13 +48,11 @@ export default function ProductDetailsPage() {
   const listStatus = useAppSelector((state) => state.inventory.status);
   const detailStatus = useAppSelector((state) => state.inventory.productDetailStatus);
   const detailError = useAppSelector((state) => state.inventory.productDetailError);
-const business = useAppSelector((state) => state.business.business);
-  const businessId  =  business.length > 0 ? business[0].id : ''
   // The product may already be in the store from the Inventory List; only
   // fetch it directly (e.g. on a hard refresh / deep link) if it's missing.
   useEffect(() => {
     if (!product && listStatus === 'idle') {
-      dispatch(fetchProducts(businessId));
+      dispatch(fetchProducts());
     } else if (!product && listStatus !== 'loading') {
       dispatch(fetchProductById(productId));
     }

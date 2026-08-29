@@ -1,8 +1,8 @@
 import { apiRequest } from '../../../services/api/apiClient';
 import type { CreateProductRequest, Product, UpdateProductRequest } from '../types/product.types';
 
-export function getProducts(businessId:string): Promise<Product[]> {
-  return apiRequest<Product[]>(`/products/${businessId}`);
+export function getProducts(): Promise<Product[]> {
+  return apiRequest<Product[]>(`/products`);
 }
 
 export function createProduct(payload: CreateProductRequest): Promise<Product> {

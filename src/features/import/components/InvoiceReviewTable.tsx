@@ -1,0 +1,89 @@
+import styled from 'styled-components';
+import type { DetectedProduct, InvoiceProducts } from '../types/import.types';
+import { InvoiceReviewRow } from './InvoiceReviewRow';
+
+const TableWrapper = styled.div`
+  width: 100%;
+  background: ${({ theme }) => theme.colors.surface};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.lg};
+  box-shadow: ${({ theme }) => theme.shadow.card};
+  overflow: hidden;
+  overflow-x: auto;
+`;
+
+const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1200px;
+`;
+
+const Thead = styled.thead`
+  background: ${({ theme }) => theme.colors.background};
+`;
+
+const Th = styled.th<{ $align?: 'left' | 'right' }>`
+  padding: ${({ theme }) => theme.spacing(3)} ${({ theme }) => theme.spacing(4)};
+  text-align: ${({ $align = 'left' }) => $align};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: ${({ theme }) => theme.font.weight.semibold};
+  color: ${({ theme }) => theme.colors.textSecondary};
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  white-space: nowrap;
+`;
+
+interface InvoiceReviewTableProps {
+  products: InvoiceProducts[];
+  onEdit: (id: string) => void;
+  onRemove: (id: string) => void;
+}
+
+export function InvoiceReviewTable({
+  products,
+  onEdit,
+  onRemove,
+}: InvoiceReviewTableProps) {
+  // const allSelected = products.length > 0 && products.every((product) => product.selected);
+
+  return (
+    <TableWrapper>
+      <Table>
+        <Thead>
+          <tr>
+            {/* <Th>
+              <input
+                type="checkbox"
+                checked={allSelected}
+                onChange={(event) => onToggleSelectAll(event.target.checked)}
+                aria-label="Select all products"
+              />
+            </Th> */}
+            <Th>Status</Th>
+            <Th>Product</Th>
+            <Th $align="right">Quantity</Th>
+            <Th $align="right">Current Qty.</Th>
+            <Th $align="right">Expected Qty.</Th>
+
+            <Th $align="right">Rate</Th>
+            <Th $align="right">MRP</Th>
+             <Th $align="right">Expiry Date</Th>
+             <Th $align="right">Total Amt.</Th>
+
+            <Th $align="right">Actions</Th>
+          </tr>
+        </Thead>
+        <tbody>
+          {products.map((product) => (
+            <InvoiceReviewRow
+              product={product}
+              onEdit={onEdit}
+              onRemove={onRemove}
+            />
+          ))}
+        </tbody>
+      </Table>
+    </TableWrapper>
+  );
+}

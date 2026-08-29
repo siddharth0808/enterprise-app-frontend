@@ -1,18 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import { PageHeader } from "../../../components/layout/PageHeader";
-import { Button } from "../../../components/common/Button";
-import { Loader } from "../../../components/common/Loader";
-import { ErrorState } from "../../../components/common/ErrorState";
-import { useAppDispatch, useAppSelector } from "../../../app/store/hooks";
-import { fetchProducts } from "../store/inventorySlice";
-import { ProductSearch } from "../components/ProductSearch";
-import { ProductTable } from "../components/ProductTable";
-import { ProductCardList } from "../components/ProductCard";
-import { EmptyInventory } from "../components/EmptyInventory";
-import { FilterChips } from "../components/FilterChips";
-import { getStockStatus } from "../../../utils/formatters";
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { PageHeader } from '../../../components/layout/PageHeader';
+import { Loader } from '../../../components/common/Loader';
+import { ErrorState } from '../../../components/common/ErrorState';
+import { useAppDispatch, useAppSelector } from '../../../app/store/hooks';
+import { fetchProducts } from '../store/inventorySlice';
+import { ProductSearch } from '../components/ProductSearch';
+import { ProductTable } from '../components/ProductTable';
+import { ProductCardList } from '../components/ProductCard';
+import { EmptyInventory } from '../components/EmptyInventory';
+import { FilterChips } from '../components/FilterChips';
+import { AddInventoryMenu } from '../../import/components/AddInventoryMenu';
+import { getStockStatus } from '../../../utils/formatters';
 
 const Content = styled.div`
   display: flex;
@@ -34,12 +34,12 @@ const SearchWrapper = styled.div`
   min-width: 260px;
 `;
 
-type StockFilter = "all" | "low-stock" | "out-of-stock";
+type StockFilter = 'all' | 'low-stock' | 'out-of-stock';
 
 const filterOptions: Array<{ value: StockFilter; label: string }> = [
-  { value: "all", label: "All Products" },
-  { value: "low-stock", label: "Low Stock" },
-  { value: "out-of-stock", label: "Out of Stock" },
+  { value: 'all', label: 'All Products' },
+  { value: 'low-stock', label: 'Low Stock' },
+  { value: 'out-of-stock', label: 'Out of Stock' },
 ];
 
 export default function InventoryListPage() {
@@ -50,11 +50,9 @@ export default function InventoryListPage() {
   );
   const [query, setQuery] = useState("");
   const [stockFilter, setStockFilter] = useState<StockFilter>("all");
-  const business = useAppSelector((state) => state.business.business);
-  const businessId = business.length > 0 ? business[0].id : "";
 
   useEffect(() => {
-    dispatch(fetchProducts(businessId));
+    dispatch(fetchProducts());
   }, [dispatch]);
 
   const filteredProducts = useMemo(() => {
@@ -69,34 +67,22 @@ export default function InventoryListPage() {
 
       if (!matchesQuery) return false;
 
-      if (stockFilter === "all") return true;
-      const stockStatus = getStockStatus(
-        product.currentStock,
-        product.minimumStock,
-      );
-      if (stockFilter === "low-stock") return stockStatus === "low-stock";
-      return stockStatus === "out-of-stock";
+      if (stockFilter === 'all') return true;
+      const stockStatus = getStockStatus(product.currentStock, product.minimumStock);
+      if (stockFilter === 'low-stock') return stockStatus === 'low-stock';
+      return stockStatus === 'out-of-stock';
     });
   }, [products, query, stockFilter]);
 
   const renderBody = () => {
-    if (status === "loading" || status === "idle") {
+    if (status === 'loading' || status === 'idle') {
       return <Loader label="Loading inventory…" />;
     }
-    if (status === "failed") {
-      return (
-        <ErrorState
-          message={error ?? "Failed to load products."}
-          onRetry={() => dispatch(fetchProducts(businessId))}
-        />
-      );
+    if (status === 'failed') {
+      return <ErrorState message={error ?? 'Failed to load products.'} onRetry={() => dispatch(fetchProducts())} />;
     }
     if (filteredProducts.length === 0) {
-      return (
-        <EmptyInventory
-          isFiltered={products.length > 0 && filteredProducts.length === 0}
-        />
-      );
+      return <EmptyInventory isFiltered={products.length > 0 && filteredProducts.length === 0} />;
     }
     return (
       <>
@@ -112,20 +98,17 @@ export default function InventoryListPage() {
         title="Inventory"
         subtitle="Track stock levels and manage your product catalog"
         action={
-          <Button type="button" onClick={() => navigate("/products/new")}>
-            + Add Product
-          </Button>
+          <AddInventoryMenu
+            onAddProductManually={() => navigate('/products/new')}
+            onImportFromInvoice={() => navigate('/import')}
+          />
         }
       />
       <FilterBar>
         <SearchWrapper>
           <ProductSearch value={query} onChange={setQuery} />
         </SearchWrapper>
-        <FilterChips
-          options={filterOptions}
-          value={stockFilter}
-          onChange={setStockFilter}
-        />
+        <FilterChips options={filterOptions} value={stockFilter} onChange={setStockFilter} />
       </FilterBar>
       {renderBody()}
     </Content>

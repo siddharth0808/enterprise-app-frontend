@@ -1,4 +1,5 @@
-import styled from 'styled-components';
+import styled from "styled-components";
+import { useAppSelector } from "../../app/store/hooks";
 
 const Wrapper = styled.div`
   display: flex;
@@ -30,10 +31,20 @@ const Wordmark = styled.p`
 `;
 
 export function Logo() {
+  const business = useAppSelector((state) => state.business.business);
+
+  const businessName = business.length > 0 ? business[0].businessName.split(' ') : [];
   return (
     <Wrapper>
       <Mark>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+        >
           <rect x="3" y="3" width="7" height="7" rx="1" />
           <rect x="14" y="3" width="7" height="7" rx="1" />
           <rect x="3" y="14" width="7" height="7" rx="1" />
@@ -41,7 +52,7 @@ export function Logo() {
         </svg>
       </Mark>
       <Wordmark>
-        Inventory<span>Flow</span>
+        {businessName[0]}<span>{businessName[1]}</span>
       </Wordmark>
     </Wrapper>
   );

@@ -28,9 +28,9 @@ function upsertProduct(products: Product[], product: Product): Product[] {
 
 export const fetchProducts = createAsyncThunk(
   'inventory/fetchProducts',
-  async (businessId:string, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      return await productRepository.getProducts(businessId);
+      return await productRepository.getProducts();
     } catch (error) {
       return rejectWithValue(error instanceof Error ? error.message : 'Failed to load products');
     }

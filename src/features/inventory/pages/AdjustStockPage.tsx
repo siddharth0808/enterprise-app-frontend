@@ -94,7 +94,7 @@ export default function AdjustStockPage() {
 
   useEffect(() => {
     if (!product && listStatus === 'idle') {
-      dispatch(fetchProducts(businessId));
+      dispatch(fetchProducts());
     } else if (!product && listStatus !== 'loading') {
       dispatch(fetchProductById(productId));
     }

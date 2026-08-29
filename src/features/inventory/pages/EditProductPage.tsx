@@ -46,12 +46,10 @@ export default function EditProductPage() {
   const isUpdating = useAppSelector((state) => state.inventory.isUpdating);
   const updateError = useAppSelector((state) => state.inventory.updateError);
 
-  const business = useAppSelector((state) => state.business.business);
-  const businessId = business.length > 0 ? business[0].id : "";
 
   useEffect(() => {
     if (!product && listStatus === 'idle') {
-      dispatch(fetchProducts(businessId));
+      dispatch(fetchProducts());
     } else if (!product && listStatus !== 'loading') {
       dispatch(fetchProductById(productId));
     }

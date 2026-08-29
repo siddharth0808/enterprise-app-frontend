@@ -9,13 +9,14 @@ import EmailVerificationPage from '../../features/auth/pages/EmailVerificationPa
 import BusinessSetupPage from '../../features/business/pages/BusinessSetupPage';
 import InventoryListPage from '../../features/inventory/pages/InventoryListPage';
 import AddProductPage from '../../features/inventory/pages/AddProductPage';
-
+import ProductDetailsPage from '../../features/inventory/pages/ProductDetailsPage';
+import EditProductPage from '../../features/inventory/pages/EditProductPage';
+import AdjustStockPage from '../../features/inventory/pages/AdjustStockPage';
+import InventoryHistoryPage from '../../features/inventory/pages/InventoryHistoryPage';
+import ImportWizardPage from '../../features/import/pages/ImportWizardPage';
+import ImportHistoryPage from '../../features/import/pages/ImportHistoryPage';
 import ProfilePage from '../../features/profile/pages/ProfilePage';
 import { useAppSelector } from '../store/hooks';
-import AdjustStockPage from '../../features/inventory/pages/AdjustStockPage';
-import EditProductPage from '../../features/inventory/pages/EditProductPage';
-import InventoryHistoryPage from '../../features/inventory/pages/InventoryHistoryPage';
-import ProductDetailsPage from '../../features/inventory/pages/ProductDetailsPage';
 
 /** Sends "/" to the right authenticated destination once we know it. */
 function RootRedirect() {
@@ -129,6 +130,26 @@ export function AppRouter() {
           <BusinessSetupRoute>
             <AppLayout>
               <ProfilePage />
+            </AppLayout>
+          </BusinessSetupRoute>
+        }
+      />
+      <Route
+        path="/import"
+        element={
+          <BusinessSetupRoute>
+            <AppLayout>
+              <ImportWizardPage />
+            </AppLayout>
+          </BusinessSetupRoute>
+        }
+      />
+      <Route
+        path="/import/history"
+        element={
+          <BusinessSetupRoute>
+            <AppLayout>
+              <ImportHistoryPage />
             </AppLayout>
           </BusinessSetupRoute>
         }
