@@ -45,7 +45,7 @@ export function ProductSearch({ value, onChange }: ProductSearchProps) {
       </SearchIcon>
       <SearchInput
         type="text"
-        placeholder="Search products by name, SKU, or brand..."
+        placeholder="Search products by name, batch no., or maufacturer..."
         value={value}
         onChange={(event) => onChange(event.target.value)}
         aria-label="Search products"

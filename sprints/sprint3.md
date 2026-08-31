@@ -1,6 +1,6 @@
 
 
-Design the DESKTOP UI/UX for Sprint 3 of an existing inventory management application called "InventoryFlow".
+Design the DESKTOP UI/UX for Sprint 3 of an existing inventory management application called "GoodsWise".
 
 IMPORTANT:
 This is an extension of an existing application.
@@ -31,7 +31,7 @@ The application is built with react and must eventually support responsive layou
 PRODUCT CONTEXT
 ==================================================
 
-InventoryFlow helps business owners manage their inventory.
+GoodsWise helps business owners manage their inventory.
 
 The user already has:
 

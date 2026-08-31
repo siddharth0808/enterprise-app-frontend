@@ -8,7 +8,7 @@ import type { Business, CreateBusinessRequest, UpdateBusinessRequest } from '../
  */
 export async function getMyBusiness(): Promise<Business[] | []> {
   try {
-    return await apiRequest<Business[]>('/business/me');
+    return await apiRequest<Business[]>('/business');
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) {
       return [];
@@ -18,9 +18,9 @@ export async function getMyBusiness(): Promise<Business[] | []> {
 }
 
 export function createBusiness(payload: CreateBusinessRequest): Promise<Business> {
-  return apiRequest<Business>('/business/setup', { method: 'POST', body: payload });
+  return apiRequest<Business>('/business', { method: 'POST', body: payload });
 }
 
 export function updateMyBusiness(payload: UpdateBusinessRequest): Promise<Business> {
-  return apiRequest<Business>('/business/me', { method: 'PATCH', body: payload });
+  return apiRequest<Business>('/business', { method: 'PATCH', body: payload });
 }

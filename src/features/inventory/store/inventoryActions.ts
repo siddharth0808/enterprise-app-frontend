@@ -6,6 +6,6 @@ import { createAction } from '@reduxjs/toolkit';
  * `currentStock` without `transactionSlice` needing to import or reach
  * into `inventorySlice` directly.
  */
-export const stockAdjusted = createAction<{ productId: string; newStock: number }>(
+export const stockAdjusted = createAction<{ productId: string; newStock: number, newAmount:number }>(
   'inventory/stockAdjusted'
 );

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import type { DetectedProduct, InvoiceProducts } from '../types/import.types';
+import type { InvoiceProducts } from '../types/import.types';
 import { InvoiceReviewRow } from './InvoiceReviewRow';
 
 const TableWrapper = styled.div`

@@ -13,7 +13,6 @@ import type {
   ImportSummary,
   Invoice,
   InvoiceFileMeta,
-  InvoiceMeta,
   InvoiceProducts,
 } from "../types/import.types";
 
@@ -290,7 +289,7 @@ const importSlice = createSlice({
         state.analyzeError =
           (action.payload as string) ?? "Failed to analyze invoice";
       })
-      .addCase(getInvoiceStatus.pending, (state, action) => {
+      .addCase(getInvoiceStatus.pending, (state) => {
         state.analyzeError = null;
       })
       .addCase(getInvoiceStatus.fulfilled, (state, action) => {
@@ -303,7 +302,7 @@ const importSlice = createSlice({
         state.analyzeError =
           (action.payload as string) ?? "Failed to analyze invoice";
       })
-      .addCase(getInvoiceReview.pending, (state, action) => {
+      .addCase(getInvoiceReview.pending, (state) => {
         state.analyzeError = null;
       })
       .addCase(getInvoiceReview.fulfilled, (state, action) => {

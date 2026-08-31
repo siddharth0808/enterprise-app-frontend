@@ -16,7 +16,7 @@ export const fetchTransactionHistory = createAsyncThunk(
   'transactions/fetchHistory',
   async (params:any, { rejectWithValue }) => {
     try {
-      const history = await transactionRepository.getTransactionHistory(params.businessId, params.productId);
+      const history = await transactionRepository.getTransactionHistory(params.productId);
       return { productId:params.productId, history };
     } catch (error) {
       return rejectWithValue(error instanceof Error ? error.message : 'Failed to load history');
@@ -30,12 +30,12 @@ export const fetchTransactionHistory = createAsyncThunk(
 export const createTransaction = createAsyncThunk(
   'transactions/create',
   async (
-    {businessId, productId, payload }: { businessId:string,productId: string; payload: CreateTransactionRequest },
+    {productId, payload }: {productId: string; payload: CreateTransactionRequest },
     { dispatch, rejectWithValue }
   ) => {
     try {
-      const response = await transactionRepository.createTransaction(businessId,productId, payload);
-      dispatch(stockAdjusted({ productId, newStock: response.newStock }));
+      const response = await transactionRepository.createTransaction(productId, payload);
+      dispatch(stockAdjusted({ productId, newStock: response.newStock, newAmount: response.newAmount }));
       return { productId, transaction: response };
     } catch (error) {
       return rejectWithValue(error instanceof Error ? error.message : 'Failed to save the adjustment');

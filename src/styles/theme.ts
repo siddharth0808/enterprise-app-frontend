@@ -1,4 +1,4 @@
-// Central design tokens. Sourced from the InventoryFlow Figma file so that
+// Central design tokens. Sourced from the GoodsWise Figma file so that
 // every styled-component references the same palette/spacing/radius scale
 // instead of scattering literal values across the codebase.
 

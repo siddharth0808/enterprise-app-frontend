@@ -50,11 +50,9 @@ export default function InventoryListPage() {
   );
   const [query, setQuery] = useState("");
   const [stockFilter, setStockFilter] = useState<StockFilter>("all");
-  const business = useAppSelector((state) => state.business.business);
-  const businessId = business.length > 0 ? business[0].id : "";
 
   useEffect(() => {
-    dispatch(fetchProducts(businessId));
+    dispatch(fetchProducts());
   }, [dispatch]);
 
   const filteredProducts = useMemo(() => {
@@ -63,7 +61,7 @@ export default function InventoryListPage() {
     return products.filter((product) => {
       const matchesQuery =
         !trimmed ||
-        [product.name, product.sku, product.brand, product.category]
+        [product.name, product.batchNumber, product.manufacturer, product.category]
           .filter(Boolean)
           .some((field) => field!.toLowerCase().includes(trimmed));
 
@@ -87,7 +85,7 @@ export default function InventoryListPage() {
       return (
         <ErrorState
           message={error ?? "Failed to load products."}
-          onRetry={() => dispatch(fetchProducts(businessId))}
+          onRetry={() => dispatch(fetchProducts())}
         />
       );
     }

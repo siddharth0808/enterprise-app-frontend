@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 import { PageHeader } from "../../../components/layout/PageHeader";
 import { Loader } from "../../../components/common/Loader";
@@ -58,8 +58,10 @@ const CurrentStockBlock = styled.div`
 `;
 
 export default function InventoryHistoryPage() {
-  const { productId = "" } = useParams<{ productId: string }>();
-  const dispatch = useAppDispatch();
+const { productId = "" } = useParams<{ productId: string}>();
+  const [searchParams] = useSearchParams();
+  const isFromRow = searchParams.get("fromRow");  
+    const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const product = useAppSelector((state) =>
@@ -76,9 +78,6 @@ export default function InventoryHistoryPage() {
     (state) => state.transactions.historyError,
   );
 
-  const business = useAppSelector((state) => state.business.business);
-  const businessId = business.length > 0 ? business[0].id : "";
-
   useEffect(() => {
     if (!product && listStatus === "idle") {
       dispatch(fetchProducts());
@@ -88,8 +87,13 @@ export default function InventoryHistoryPage() {
   }, [product, listStatus, productId, dispatch]);
 
   useEffect(() => {
-    dispatch(fetchTransactionHistory({businessId,productId}));
+    dispatch(fetchTransactionHistory({productId}));
   }, [productId, dispatch]);
+
+    const onBack = (route:string) =>{
+    if(isFromRow === 'true') return navigate(`/inventory`)
+    return navigate(route)
+  }
 
   const renderBody = () => {
     if (historyStatus === "loading" || historyStatus === "idle") {
@@ -125,11 +129,11 @@ export default function InventoryHistoryPage() {
         title="Inventory History"
         subtitle={
           product
-            ? `Transaction records of ${product.name}${product.sku ? ` (${product.sku})` : ""}`
+            ? `Transaction records of ${product.name}${product.batchNumber ? ` (${product.batchNumber})` : ""}`
             : undefined
         }
         onBack={() =>
-          navigate(product ? `/products/${product.id}` : "/inventory")
+          onBack(product ? `/products/${product.id}` : "/inventory")
         }
       />
 
@@ -141,8 +145,8 @@ export default function InventoryHistoryPage() {
               <SummaryValue>{product.name}</SummaryValue>
             </SummaryField>
             <SummaryField>
-              <SummaryLabel>SKU</SummaryLabel>
-              <SummaryValue>{product.sku || "—"}</SummaryValue>
+              <SummaryLabel>Batch No.</SummaryLabel>
+              <SummaryValue>{product.batchNumber || "—"}</SummaryValue>
             </SummaryField>
           </SummaryFields>
           <CurrentStockBlock>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import styled from 'styled-components';
 
 const Panel = styled.div`

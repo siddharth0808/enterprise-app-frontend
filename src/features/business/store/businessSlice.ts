@@ -74,7 +74,7 @@ const businessSlice = createSlice({
       })
       .addCase(createBusiness.fulfilled, (state, action:any) => {
         state.isSubmitting = false;
-        state.business = action.payload ?? [];
+        state.business = action.payload ?  [action.payload] :  [];
         state.isChecked = true;
       })
       .addCase(createBusiness.rejected, (state, action) => {
@@ -87,7 +87,7 @@ const businessSlice = createSlice({
       })
       .addCase(updateBusiness.fulfilled, (state, action:any) => {
         state.isSubmitting = false;
-        state.business = action.payload ?? [];
+        state.business = action.payload ?  [action.payload] :  [];
       })
       .addCase(updateBusiness.rejected, (state, action) => {
         state.isSubmitting = false;

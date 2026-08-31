@@ -38,6 +38,7 @@ export interface InventoryTransaction {
   quantity: number;
   previousStock: number;
   newStock: number;
+  newAmount: number;
   reason?: string;
   createdBy?: string;
   createdAt: string;

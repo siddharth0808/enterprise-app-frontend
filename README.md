@@ -1,7 +1,7 @@
-# InventoryFlow (Web)
+# GoodsWise (Web)
 
 A React + TypeScript port of the `enterprise-app-frontend` React Native app, rebuilt as a
-responsive web app and restyled to match the InventoryFlow Figma design.
+responsive web app and restyled to match the GoodsWise Figma design.
 
 ## Stack
 

@@ -1,14 +1,8 @@
-import { env } from '../../../config/env';
-import { getIdToken } from '../../../services/cognito/cognito.service';
 import { apiRequest } from '../../../services/api/apiClient';
 import { ApiError, GENERIC_ERROR_MESSAGE } from '../../../services/api/apiError';
 import type { ApiErrorBody } from '../../../services/api/api.types';
 import type {
-  AnalyzeInvoiceResult,
-  ConfirmImportRequest,
-  DetectedProduct,
   ImportRecord,
-  ImportResultData,
   Invoice,
   InvoiceProducts,
   UploadInvoice,

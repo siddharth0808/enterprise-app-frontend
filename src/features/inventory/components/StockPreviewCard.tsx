@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { getTransactionLabel, getTransactionSign, type TransactionType } from '../types/transaction.types';
-import { formatSignedQuantity } from '../../../utils/formatters';
+import { formatCurrency, formatSignedQuantity } from '../../../utils/formatters';
 import { FormError } from '../../auth/components/AuthCard.styles';
 
 const Card = styled.section`
@@ -76,16 +76,18 @@ const Note = styled.div`
 
 interface StockPreviewCardProps {
   currentStock: number;
+  rate:number;
   type: TransactionType;
   quantity: number;
 }
 
-export function StockPreviewCard({ currentStock, type, quantity }: StockPreviewCardProps) {
+export function StockPreviewCard({ currentStock,rate, type, quantity }: StockPreviewCardProps) {
   const sign = getTransactionSign(type);
   const signedQuantity = sign * Math.abs(quantity || 0);
   const newStock =  currentStock + signedQuantity
   const expectedStock = Math.max(0, newStock);
-  const isNegetiveStock =  newStock < 0
+  const isNegetiveStock =  newStock < 0;
+  const amount =  Number(expectedStock) * Number(rate)
   return (
     <Card>
       {isNegetiveStock && <FormError role="alert">Adjustment quantity could not be greater than current stock</FormError>}
@@ -105,6 +107,10 @@ export function StockPreviewCard({ currentStock, type, quantity }: StockPreviewC
         <Row>
           <ResultLabel>New Expected Stock</ResultLabel>
           <ResultValue>{expectedStock} Units</ResultValue>
+        </Row>
+        <Row>
+          <Label>Expected Total Amt.</Label>
+          <Value>{formatCurrency(amount)}</Value>
         </Row>
       </Rows>
       <Note>

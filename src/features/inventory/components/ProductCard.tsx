@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import type { Product } from '../types/product.types';
 import { StatusBadge } from '../../../components/common/StatusBadge';
 import { ActionsMenu } from '../../../components/common/ActionsMenu';
-import { formatCurrency } from '../../../utils/formatters';
+import { formatCurrency, formatDate } from '../../../utils/formatters';
 import { getStockStatusMeta } from '../utils/stockStatus';
 import { media } from '../../../styles/breakpoints';
 
@@ -104,7 +104,7 @@ export function ProductCardList({ products }: ProductCardListProps) {
               <NameBlock>
                 <Name>{product.name}</Name>
                 <Meta>
-                  {[product.batchNumber, product.category, product.manufacturer].filter(Boolean).join(' · ') || '—'}
+                  {[product.batchNumber, product.manufacturer, formatDate(product.expiryDate)].filter(Boolean).join(' · ') || '—'}
                 </Meta>
               </NameBlock>
               <BadgeRow>
@@ -124,11 +124,11 @@ export function ProductCardList({ products }: ProductCardListProps) {
             </TopRow>
             <DetailsGrid>
               <DetailItem>
-                <DetailLabel>Selling Price</DetailLabel>
+                <DetailLabel>MRP.</DetailLabel>
                 <DetailValue>{formatCurrency(product.mrp)}</DetailValue>
               </DetailItem>
               <DetailItem>
-                <DetailLabel>Cost Price</DetailLabel>
+                <DetailLabel>Rate</DetailLabel>
                 <DetailValue>{formatCurrency(product.rate)}</DetailValue>
               </DetailItem>
               <DetailItem>

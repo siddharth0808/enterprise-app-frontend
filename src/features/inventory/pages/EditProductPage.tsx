@@ -1,16 +1,32 @@
-import { useEffect, useState, type FormEvent } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import styled from 'styled-components';
-import { Input } from '../../../components/common/Input';
-import { Button } from '../../../components/common/Button';
-import { FormField } from '../../../components/common/FormField';
-import { PageHeader } from '../../../components/layout/PageHeader';
-import { Loader } from '../../../components/common/Loader';
-import { useAppDispatch, useAppSelector } from '../../../app/store/hooks';
-import { clearUpdateError, fetchProductById, fetchProducts, updateProduct } from '../store/inventorySlice';
-import { isNonNegativeNumber, isRequired, validateFields } from '../../../utils/validation';
-import { FormError } from '../../auth/components/AuthCard.styles';
-import { Divider, FieldRow, FieldStack, FormActions, FormCard } from '../../business/components/FormLayout.styles';
+import { useEffect, useState, type FormEvent } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import styled from "styled-components";
+import { Input } from "../../../components/common/Input";
+import { Button } from "../../../components/common/Button";
+import { FormField } from "../../../components/common/FormField";
+import { PageHeader } from "../../../components/layout/PageHeader";
+import { Loader } from "../../../components/common/Loader";
+import { useAppDispatch, useAppSelector } from "../../../app/store/hooks";
+import {
+  clearUpdateError,
+  fetchProductById,
+  fetchProducts,
+  updateProduct,
+} from "../store/inventorySlice";
+import {
+  isNonNegativeNumber,
+  isRequired,
+  validateFields,
+} from "../../../utils/validation";
+import { FormError } from "../../auth/components/AuthCard.styles";
+import {
+  Divider,
+  FieldRow,
+  FieldStack,
+  FormActions,
+  FormCard,
+} from "../../business/components/FormLayout.styles";
+import type { Product } from "../types/product.types";
 
 const Content = styled.div`
   display: flex;
@@ -26,68 +42,78 @@ const ReadOnlyHint = styled.p`
   color: ${({ theme }) => theme.colors.textMuted};
 `;
 
-interface FormValues {
-  name: string;
-  sku: string;
-  category: string;
-  brand: string;
-  sellingPrice: string;
-  costPrice: string;
-  minimumStock: string;
-}
-
 export default function EditProductPage() {
-  const { productId = '' } = useParams<{ productId: string }>();
+ const { productId = "" } = useParams<{ productId: string}>();
+  const [searchParams] = useSearchParams();
+  const isFromRow = searchParams.get("fromRow");  
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const product = useAppSelector((state) => state.inventory.products.find((item) => item.id === productId));
+  const product = useAppSelector((state) =>
+    state.inventory.products.find((item) => item.id === productId),
+  );
   const listStatus = useAppSelector((state) => state.inventory.status);
   const isUpdating = useAppSelector((state) => state.inventory.isUpdating);
   const updateError = useAppSelector((state) => state.inventory.updateError);
 
-
   useEffect(() => {
-    if (!product && listStatus === 'idle') {
+    if (!product && listStatus === "idle") {
       dispatch(fetchProducts());
-    } else if (!product && listStatus !== 'loading') {
+    } else if (!product && listStatus !== "loading") {
       dispatch(fetchProductById(productId));
     }
   }, [product, listStatus, productId, dispatch]);
 
-  const [values, setValues] = useState<FormValues>(() => ({
-    name: product?.name ?? '',
-    sku: product?.sku ?? '',
-    category: product?.category ?? '',
-    brand: product?.brand ?? '',
-    sellingPrice: product ? String(product.sellingPrice) : '',
-    costPrice: product ? String(product.costPrice) : '',
-    minimumStock: product ? String(product.minimumStock) : '',
-  }));
-  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormValues, string>>>({});
+  const [values, setValues] = useState<Product>({
+    name: product?.name ?? "",
+    mrp: Number(product?.mrp),
+    rate: Number(product?.rate),
+    currentStock: Number(product?.currentStock),
+    minimumStock: Number(product?.minimumStock),
+    expiryDate: product?.expiryDate ? new Date(product?.expiryDate).toISOString().split('T')[0] : '',
+    manufacturer: product?.manufacturer || "",
+    batchNumber: product?.batchNumber || "",
+    hsn: Number(product?.hsn) || 0,
+    amount: Number(product?.amount) || 0,
+    discount: Number(product?.discount) || 0,
+    sgst: Number(product?.sgst) || 0,
+    cgst: Number(product?.cgst) || 0,
+    status: "NEW",
+  });
+  const [fieldErrors, setFieldErrors] = useState<
+    Partial<Record<keyof Product, string>>
+  >({});
 
   // Hydrate once the product is available (e.g. after a fetch on refresh).
   const hasHydrated = product !== undefined;
   useEffect(() => {
     if (product) {
       setValues({
-        name: product.name,
-        sku: product.sku ?? '',
-        category: product.category ?? '',
-        brand: product.brand ?? '',
-        sellingPrice: String(product.sellingPrice),
-        costPrice: String(product.costPrice),
-        minimumStock: String(product.minimumStock),
+        name: product?.name ?? "",
+        mrp: Number(product?.mrp),
+        rate: Number(product?.rate),
+        currentStock: Number(product?.currentStock),
+        minimumStock: Number(product?.minimumStock),
+        expiryDate: new Date(product?.expiryDate || '').toISOString().split('T')[0],
+        manufacturer: product?.manufacturer || "",
+        batchNumber: product?.batchNumber || "",
+        hsn: Number(product?.hsn) || 0,
+        amount: Number(product?.amount) || 0,
+        discount: Number(product?.discount) || 0,
+        sgst: Number(product?.sgst) || 0,
+        cgst: Number(product?.cgst) || 0,
+        status: "NEW",
       });
     }
     // Only re-hydrate when the product transitions from unloaded to loaded.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasHydrated]);
 
-  const handleChange = (field: keyof FormValues) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValues((prev) => ({ ...prev, [field]: event.target.value }));
-    if (updateError) dispatch(clearUpdateError());
-  };
+  const handleChange =
+    (field: keyof Product) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setValues((prev) => ({ ...prev, [field]: event.target.value }));
+      if (updateError) dispatch(clearUpdateError());
+    };
 
   if (!product) {
     return <Loader label="Loading product…" />;
@@ -97,10 +123,20 @@ export default function EditProductPage() {
     event.preventDefault();
 
     const errors = validateFields(values, {
-      name: (value) => (!isRequired(value) ? 'Product Name is required.' : undefined),
-      sellingPrice: (value) => (!isNonNegativeNumber(value) ? 'Enter a valid selling price.' : undefined),
-      costPrice: (value) => (!isNonNegativeNumber(value) ? 'Enter a valid cost price.' : undefined),
-      minimumStock: (value) => (!isNonNegativeNumber(value) ? 'Enter a valid minimum stock.' : undefined),
+      name: (value) =>
+        !isRequired(value) ? "Product Name is required." : undefined,
+      mrp: (value) =>
+        !isNonNegativeNumber(value)
+          ? "Enter a valid selling price."
+          : undefined,
+      rate: (value) =>
+        !isNonNegativeNumber(value) ? "Enter a valid cost price." : undefined,
+      minimumStock: (value) =>
+        !isNonNegativeNumber(value)
+          ? "Enter a valid minimum stock."
+          : undefined,
+      expiryDate: (value) =>
+        !isRequired(value) ? "Expiry date is required." : undefined,
     });
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) return;
@@ -109,109 +145,162 @@ export default function EditProductPage() {
 
     const result = await dispatch(
       updateProduct({
-        productId: product.id,
+        productId: product.id ?? "",
         payload: {
           name: values.name,
-          sku: values.sku || undefined,
-          category: values.category || undefined,
-          brand: values.brand || undefined,
-          sellingPrice: Number(values.sellingPrice),
-          costPrice: Number(values.costPrice),
+          manufacturer: values.manufacturer || '',
+          mrp: Number(values.mrp),
+          rate: Number(values.rate),
+          currentStock: Number(values.currentStock),
           minimumStock: Number(values.minimumStock),
+          amount: Number(values.amount) || 0,
+          discount: Number(values.discount) || 0,
+          expiryDate: values.expiryDate,
         },
-      })
+      }),
     );
     if (updateProduct.fulfilled.match(result)) {
-      navigate(`/products/${product.id}`, { replace: true });
+       const route =  isFromRow === 'true' ? `/inventory` : `/products/${product.id}`
+      navigate(route, { replace: true });
     }
   };
+
+  const onBack = (route:string) =>{
+    if(isFromRow === 'true') return navigate(`/inventory`)
+    return navigate(route)
+  }
 
   return (
     <Content>
       <PageHeader
         title="Edit Product"
         subtitle={`Modify details of ${product.name}`}
-        onBack={() => navigate(`/products/${product.id}`)}
+        onBack={() => onBack(`/products/${product.id}`)}
       />
 
       <FormCard onSubmit={handleSubmit} noValidate>
         {updateError && <FormError role="alert">{updateError}</FormError>}
 
         <FieldStack>
-          <FormField label="Product Name" htmlFor="name" error={fieldErrors.name}>
+          <FormField
+            label="Product Name"
+            htmlFor="name"
+            error={fieldErrors.name}
+          >
             <Input
               id="name"
               value={values.name}
-              onChange={handleChange('name')}
+              onChange={handleChange("name")}
               $hasError={!!fieldErrors.name}
             />
           </FormField>
 
           <FieldRow>
-            <FormField label="Selling Price ($)" htmlFor="sellingPrice" error={fieldErrors.sellingPrice}>
+            <FormField label="MRP." htmlFor="mrp" error={fieldErrors.mrp}>
               <Input
-                id="sellingPrice"
+                id="mrp"
                 type="number"
                 min="0"
                 step="0.01"
-                value={values.sellingPrice}
-                onChange={handleChange('sellingPrice')}
-                $hasError={!!fieldErrors.sellingPrice}
+                value={values.mrp}
+                onChange={handleChange("mrp")}
+                $hasError={!!fieldErrors.mrp}
               />
             </FormField>
-            <FormField label="Cost Price ($)" htmlFor="costPrice" error={fieldErrors.costPrice}>
+            <FormField label="Rate" htmlFor="rate" error={fieldErrors.rate}>
               <Input
-                id="costPrice"
+                id="rate"
                 type="number"
                 min="0"
                 step="0.01"
-                value={values.costPrice}
-                onChange={handleChange('costPrice')}
-                $hasError={!!fieldErrors.costPrice}
+                value={values.rate}
+                onChange={handleChange("rate")}
+                $hasError={!!fieldErrors.rate}
               />
             </FormField>
           </FieldRow>
 
           <FieldRow>
             <FormField label="Current Stock (Read Only)" htmlFor="currentStock">
-              <Input id="currentStock" value={product.currentStock} disabled readOnly />
-              <ReadOnlyHint>Stock can only be changed via Adjust Stock.</ReadOnlyHint>
+              <Input
+                id="currentStock"
+                value={product.currentStock}
+                disabled
+                readOnly
+              />
+              <ReadOnlyHint>
+                Stock can only be changed via Adjust Stock.
+              </ReadOnlyHint>
             </FormField>
-            <FormField label="Minimum Stock Level" htmlFor="minimumStock" error={fieldErrors.minimumStock}>
+            <FormField
+              label="Minimum Stock Level"
+              htmlFor="minimumStock"
+              error={fieldErrors.minimumStock}
+            >
               <Input
                 id="minimumStock"
                 type="number"
                 min="0"
                 step="1"
                 value={values.minimumStock}
-                onChange={handleChange('minimumStock')}
+                onChange={handleChange("minimumStock")}
                 $hasError={!!fieldErrors.minimumStock}
               />
             </FormField>
           </FieldRow>
+          <FormField
+            label="Expriy Date"
+            htmlFor="expiryDate"
+            error={fieldErrors.expiryDate}
+          >
+            <Input
+              id="expiryDate"
+              type="date"
+              value={values.expiryDate}
+              onChange={handleChange("expiryDate")}
+              $hasError={!!fieldErrors.expiryDate}
+            />
+          </FormField>
         </FieldStack>
 
         <Divider>Optional Details</Divider>
 
         <FieldStack>
+          <FormField label="Manufacturer" htmlFor="manufacturer">
+            <Input
+              id="manufacturer"
+              placeholder="ABC Pvt. Ltd."
+              value={values.manufacturer}
+              onChange={handleChange("manufacturer")}
+            />
+          </FormField>
           <FieldRow>
-            <FormField label="SKU / Barcode" htmlFor="sku">
-              <Input id="sku" value={values.sku} onChange={handleChange('sku')} />
+            <FormField label="Total Amt." htmlFor="amount">
+              <Input
+                id="amount"
+                value={values.amount}
+                onChange={handleChange("amount")}
+              />
             </FormField>
-            <FormField label="Category" htmlFor="category">
-              <Input id="category" value={values.category} onChange={handleChange('category')} />
+            <FormField label="Discount" htmlFor="discount">
+              <Input
+                id="discount"
+                value={values.discount}
+                onChange={handleChange("discount")}
+              />
             </FormField>
           </FieldRow>
-          <FormField label="Brand" htmlFor="brand">
-            <Input id="brand" value={values.brand} onChange={handleChange('brand')} />
-          </FormField>
         </FieldStack>
 
         <FormActions>
           <Button type="submit" disabled={isUpdating}>
-            {isUpdating ? 'Saving…' : 'Save Changes'}
+            {isUpdating ? "Saving…" : "Save Changes"}
           </Button>
-          <Button type="button" $variant="ghost" onClick={() => navigate(`/products/${product.id}`)}>
+          <Button
+            type="button"
+            $variant="ghost"
+            onClick={() => navigate(`/products/${product.id}`)}
+          >
             Cancel
           </Button>
         </FormActions>

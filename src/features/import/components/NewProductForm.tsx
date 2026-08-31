@@ -1,6 +1,9 @@
-import { Input } from '../../../components/common/Input';
-import { FormField } from '../../../components/common/FormField';
-import { FieldRow, FieldStack } from '../../business/components/FormLayout.styles';
+import { Input } from "../../../components/common/Input";
+import { FormField } from "../../../components/common/FormField";
+import {
+  FieldRow,
+  FieldStack,
+} from "../../business/components/FormLayout.styles";
 
 export interface DetectedProductFormValues {
   name: string;
@@ -18,26 +21,54 @@ interface NewProductFormProps {
   disableQuantity?: boolean;
 }
 
-export function NewProductForm({ values, errors, onChange, disableQuantity }: NewProductFormProps) {
+export function NewProductForm({
+  values,
+  errors,
+  onChange,
+  disableQuantity,
+}: NewProductFormProps) {
   const handleChange =
-    (field: keyof DetectedProductFormValues) => (event: React.ChangeEvent<HTMLInputElement>) =>
+    (field: keyof DetectedProductFormValues) =>
+    (event: React.ChangeEvent<HTMLInputElement>) =>
       onChange(field, event.target.value);
+
+  const handleAmount =
+    (field: keyof DetectedProductFormValues) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newAmount =  field === 'rate' ? Number(event.target.value)* Number(values.quantity) :Number(event.target.value)* Number(values.rate)
+      onChange('amount', newAmount.toString())
+      return onChange(field, event.target.value);
+    };
 
   return (
     <FieldStack>
-      <FormField label="Product Name" htmlFor="detected-name" error={errors.name}>
-        <Input id="detected-name" disabled value={values.name} onChange={handleChange('name')} $hasError={!!errors.name} />
+      <FormField
+        label="Product Name"
+        htmlFor="detected-name"
+        error={errors.name}
+      >
+        <Input
+          id="detected-name"
+          disabled
+          value={values.name}
+          onChange={handleChange("name")}
+          $hasError={!!errors.name}
+        />
       </FormField>
 
       <FieldRow>
-        <FormField label="Quantity (from invoice)" htmlFor="detected-quantity" error={errors.quantity}>
+        <FormField
+          label="Quantity (from invoice)"
+          htmlFor="detected-quantity"
+          error={errors.quantity}
+        >
           <Input
             id="detected-quantity"
             type="number"
             min="0"
             step="1"
             value={values.quantity}
-            onChange={handleChange('quantity')}
+            onChange={handleAmount("quantity")}
             $hasError={!!errors.quantity}
             disabled={disableQuantity}
           />
@@ -49,31 +80,40 @@ export function NewProductForm({ values, errors, onChange, disableQuantity }: Ne
             min="0"
             step="1"
             value={values.mrp}
-            onChange={handleChange('mrp')}
+            onChange={handleChange("mrp")}
           />
         </FormField>
       </FieldRow>
 
       <FieldRow>
-        <FormField label="Rate" htmlFor="detected-cost-price" error={errors.rate}>
+        <FormField
+          label="Rate"
+          htmlFor="detected-cost-price"
+          error={errors.rate}
+        >
           <Input
             id="detected-cost-price"
             type="number"
             min="0"
             step="0.01"
             value={values.rate}
-            onChange={handleChange('rate')}
+            onChange={handleAmount("rate")}
             $hasError={!!errors.rate}
           />
         </FormField>
-        <FormField label="Amount" htmlFor="detected-selling-price" error={errors.amount}>
+        <FormField
+          label="Amount"
+          htmlFor="detected-selling-price"
+          error={errors.amount}
+        >
           <Input
             id="detected-selling-price"
             type="number"
             min="0"
             step="0.01"
+            disabled
             value={values.amount}
-            onChange={handleChange('amount')}
+            onChange={handleChange("amount")}
             $hasError={!!errors.amount}
           />
         </FormField>

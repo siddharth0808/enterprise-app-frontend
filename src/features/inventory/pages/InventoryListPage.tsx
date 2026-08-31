@@ -52,8 +52,10 @@ export default function InventoryListPage() {
   const [stockFilter, setStockFilter] = useState<StockFilter>("all");
 
   useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
+    if(!products.length && status !== 'succeeded'){
+      dispatch(fetchProducts());
+    }
+  }, [products, status, dispatch]);
 
   const filteredProducts = useMemo(() => {
     const trimmed = query.trim().toLowerCase();

@@ -84,7 +84,7 @@ export default function LoginPage() {
               id="email"
               type="email"
               autoComplete="email"
-              placeholder="admin@inventoryflow.co"
+              placeholder="admin@goodsWise.co"
               value={values.email}
               onChange={handleChange('email')}
               $hasError={!!fieldErrors.email}

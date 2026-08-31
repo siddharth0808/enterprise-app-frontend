@@ -139,7 +139,7 @@ interface ImportSuccessProps {
   onViewImportDetails: () => void;
 }
 
-export function ImportSuccess({ result,invoice, onViewInventory, onViewImportDetails }: ImportSuccessProps) {
+export function ImportSuccess({ result,invoice, onViewInventory }: ImportSuccessProps) {
   return (
     <Wrapper>
       <Card>

@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { resetApplicationState } from '../../../app/store/actions';
 import * as productRepository from '../api/product.repository';
 import { stockAdjusted } from './inventoryActions';
-import type { CreateProductRequest, InventoryState, Product, UpdateProductRequest } from '../types/product.types';
+import type { InventoryState, Product } from '../types/product.types';
 
 const initialState: InventoryState = {
   products: [],
@@ -64,7 +64,7 @@ export const createProduct = createAsyncThunk(
 export const updateProduct = createAsyncThunk(
   'inventory/updateProduct',
   async (
-    { productId, payload }: { productId: string; payload: UpdateProductRequest },
+    { productId, payload }: { productId: string; payload: Product },
     { rejectWithValue }
   ) => {
     try {
@@ -142,6 +142,7 @@ const inventorySlice = createSlice({
         const product = state.products.find((item) => item.id === action.payload.productId);
         if (product) {
           product.currentStock = action.payload.newStock;
+          product.amount =  action.payload.newAmount;
         }
       })
       // Sign out: clear the product list so the next user never sees a

@@ -21,7 +21,7 @@ import {
   FormCard,
 } from "../../business/components/FormLayout.styles";
 import type { Product } from "../types/product.types";
-import { expiryDate, formatDate } from "../../../utils/formatters";
+import { formatDate } from "../../../utils/formatters";
 
 const Content = styled.div`
   display: flex;

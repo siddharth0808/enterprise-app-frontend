@@ -127,7 +127,7 @@ export default function BusinessSetupPage() {
         <SectionTitle>
           <Title>Set up your business</Title>
           <Subtitle>
-            Tell us about your business to get started with InventoryFlow
+            Tell us about your business to get started with GoodsWise
           </Subtitle>
         </SectionTitle>
 
@@ -174,7 +174,7 @@ export default function BusinessSetupPage() {
             <Input
               id="phone"
               type="tel"
-              placeholder="+1 (555) 019-2834"
+              placeholder="+91 8390208302"
               value={values.phone}
               onChange={handleChange("phone")}
               $hasError={!!fieldErrors.phone}

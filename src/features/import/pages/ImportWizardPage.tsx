@@ -23,7 +23,6 @@ import { InvoiceUploadZone } from '../components/InvoiceUploadZone';
 import { InvoicePreview } from '../components/InvoicePreview';
 import { InvoiceFileCard } from '../components/InvoiceFileCard';
 import { InvoiceSummaryCard } from '../components/InvoiceSummaryCard';
-import { BulkActionBar } from '../components/BulkActionBar';
 import { InvoiceReviewTable } from '../components/InvoiceReviewTable';
 import { ImportSummary } from '../components/ImportSummary';
 import { ImportProgress } from '../components/ImportProgress';
@@ -31,7 +30,6 @@ import { ImportConfirmationDialog } from '../components/ImportConfirmationDialog
 import { ImportSuccess } from '../components/ImportSuccess';
 import { ImportFailure } from '../components/ImportFailure';
 import { EditDetectedProductPanel } from '../components/EditDetectedProductPanel';
-import { ChangeMatchDialog } from '../components/ChangeMatchDialog';
 import { FormError } from '../../auth/components/AuthCard.styles';
 import type { ProcessingStep } from '../types/import.types';
 import { media } from '../../../styles/breakpoints';
@@ -222,10 +220,6 @@ export default function ImportWizardPage() {
   };
 
   const editingProduct = importState?.invoice.products.find((product) => product.id === editingProductId) ?? null;
-  // const matchingProduct = importState?.invoice.products.find((product) => product.id === matchingProductId) ?? null;
-
-  // const selectedCount = importState?.invoice.products.filter((product) => product.selected).length;
-  // const allSelected = importState?.invoice.products.length > 0 && selectedCount === importState?.invoice.products.length;
 
   const totals = useMemo(() => {
     const existing = importState?.invoice.products.filter((product) => product.status === 'EXISTING').length;
@@ -356,15 +350,6 @@ export default function ImportWizardPage() {
           />
         </SummaryGrid>
 
-        {/* <BulkActionBar
-          totalCount={importState?.invoice.products.length}
-          selectedCount={selectedCount}
-          allSelected={allSelected}
-          onToggleSelectAll={(selected) => dispatch(toggleSelectAll(selected))}
-          onRemoveSelected={() => dispatch(bulkRemoveSelected())}
-          onMarkAsNew={() => dispatch(bulkMarkAsNew())}
-        /> */}
-
         <InvoiceReviewTable
           products={importState?.invoice.products}
           onEdit={setEditingProductId}
@@ -395,18 +380,6 @@ export default function ImportWizardPage() {
             }}
           />
         )}
-{/* 
-        {matchingProduct && (
-          <ChangeMatchDialog
-            product={matchingProduct}
-            candidates={existingProducts}
-            onClose={() => setMatchingProductId(null)}
-            onSelectMatch={(matchedProductId, matchedName) => {
-              dispatch(changeProductMatch({ id: matchingProduct.id, matchedProductId, matchedName }));
-              setMatchingProductId(null);
-            }}
-          />
-        )} */}
 
         {showConfirmDialog && (
           <ImportConfirmationDialog

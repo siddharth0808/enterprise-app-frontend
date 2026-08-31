@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import type { InventoryTransaction } from '../types/transaction.types';
 import { getTransactionLabel, getTransactionTone } from '../types/transaction.types';
 import { StatusBadge } from '../../../components/common/StatusBadge';
-import { formatDate, formatSignedQuantity } from '../../../utils/formatters';
+import { formatDate } from '../../../utils/formatters';
 
 const TableWrapper = styled.div`
   width: 100%;

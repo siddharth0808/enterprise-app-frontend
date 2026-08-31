@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { Input, TextArea } from '../../../components/common/Input';
 import { Button } from '../../../components/common/Button';
@@ -80,7 +80,9 @@ interface FormValues {
 }
 
 export default function AdjustStockPage() {
-  const { productId = '' } = useParams<{ productId: string }>();
+  const { productId = "" } = useParams<{ productId: string}>();
+  const [searchParams] = useSearchParams();
+  const isFromRow = searchParams.get("fromRow");
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -88,9 +90,6 @@ export default function AdjustStockPage() {
   const listStatus = useAppSelector((state) => state.inventory.status);
   const isAdjusting = useAppSelector((state) => state.transactions.isAdjusting);
   const adjustError = useAppSelector((state) => state.transactions.adjustError);
-
-  const business = useAppSelector((state) => state.business.business);
-  const businessId  =  business.length > 0 ? business[0].id : ''
 
   useEffect(() => {
     if (!product && listStatus === 'idle') {
@@ -131,7 +130,6 @@ export default function AdjustStockPage() {
 
     const result = await dispatch(
       createTransaction({
-        businessId,
         productId: product.id  || '',
         payload: {
           type,
@@ -141,16 +139,22 @@ export default function AdjustStockPage() {
       })
     );
     if (createTransaction.fulfilled.match(result)) {
-      navigate(`/products/${product.id}`, { replace: true });
+      const route =  isFromRow === 'true' ? `/inventory` : `/products/${product.id}`
+      navigate(route, { replace: true });
     }
   };
+
+   const onBack = (route:string) =>{
+    if(isFromRow === 'true') return navigate(`/inventory`)
+    return navigate(route)
+  }
 
   return (
     <Content>
       <PageHeader
         title="Adjust Stock"
         subtitle="Add or subtract stock quantities for inventory corrections"
-        onBack={() => navigate(`/products/${product.id}`)}
+        onBack={() => onBack(`/products/${product.id}`)}
       />
 
       <Layout>
@@ -158,7 +162,7 @@ export default function AdjustStockPage() {
           <ProductSummary>
             <div>
               <ProductName>{product.name}</ProductName>
-              <ProductMeta>SKU: {product.batchNumber || '—'}</ProductMeta>
+              <ProductMeta>Batch No.: {product.batchNumber || '—'}</ProductMeta>
             </div>
             <CurrentStockBlock>
               <CurrentStockLabel>Current Stock</CurrentStockLabel>
@@ -206,6 +210,7 @@ export default function AdjustStockPage() {
 
         <StockPreviewCard
           currentStock={product.currentStock}
+          rate={product.rate}
           type={type}
           quantity={Number(values.quantity) || 0}
         />
