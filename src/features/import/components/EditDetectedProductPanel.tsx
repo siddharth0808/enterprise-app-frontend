@@ -148,7 +148,7 @@ export function EditDetectedProductPanel({
               <CurrentProductLabel>Current Inventory Product</CurrentProductLabel>
               <CurrentProductName>{matchedProduct.name}</CurrentProductName>
               <CurrentProductMeta>
-                Current stock: {matchedProduct.currentStock} · {formatCurrency(matchedProduct.sellingPrice)}
+                Current stock: {matchedProduct.currentStock} · {formatCurrency(matchedProduct.mrp)}
               </CurrentProductMeta>
             </CurrentProductCard>
           )}

@@ -133,7 +133,6 @@ export default function ImportWizardPage() {
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [importingProgress, setImportingProgress] = useState(0);
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
-  const [matchingProductId, setMatchingProductId] = useState<string | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const analysisTimer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -151,7 +150,7 @@ export default function ImportWizardPage() {
   // "done" once the request actually succeeds. The counter itself is reset
   // from the event that starts the request (handleAnalyze), not from here.
   useEffect(() => {
-    if (importState.analyzeStatus === 'PROCESSING') {
+    if (importState.analyzeStatus === 'UPLOADED' || importState.analyzeStatus === 'PROCESSING') {
       analysisTimer.current = setInterval(() => {
         setAnalysisProgress((prev) => Math.min(prev + 1, ANALYSIS_STEP_LABELS.length - 1));
         dispatch(getInvoiceStatus(importState.invoiceId))
@@ -185,7 +184,7 @@ export default function ImportWizardPage() {
       return importState.result.status === 'success' ? 'success' : 'partial';
     }
     if (importState.confirmStatus === 'loading') return 'importing';
-    if (importState.analyzeStatus === 'PROCESSING') return 'processing';
+    if (importState.analyzeStatus === 'UPLOADED' || importState.analyzeStatus === 'PROCESSING') return 'processing';
     if (importState.analyzeStatus === 'REVIEW') return 'review';
 
     // if (importState.invoiceId) return 'review';
@@ -441,6 +440,7 @@ export default function ImportWizardPage() {
         <CenteredArea>
           <ImportSuccess
             result={importState.result}
+            invoice={importState.invoice}
             onViewInventory={() => {
               dispatch(resetImportWorkflow());
               navigate('/inventory');

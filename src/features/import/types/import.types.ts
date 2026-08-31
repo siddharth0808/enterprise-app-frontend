@@ -49,13 +49,12 @@ export interface ImportFailedItem {
 }
 
 export interface ImportResultData {
-  status: 'success' | 'partial';
-  invoice: InvoiceMeta;
+  status: 'ideal' |'success' | 'partial';
   productsProcessed: number;
   existingProductsUpdated: number;
   newProductsCreated: number;
   totalUnitsAdded: number;
-  failedItems: ImportFailedItem[];
+  failedItems?:any;
 }
 
 export type ImportRecordStatus = 'successful' | 'needs_review' | 'failed';

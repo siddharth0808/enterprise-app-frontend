@@ -20,6 +20,8 @@ import {
   FormActions,
   FormCard,
 } from "../../business/components/FormLayout.styles";
+import type { Product } from "../types/product.types";
+import { expiryDate, formatDate } from "../../../utils/formatters";
 
 const Content = styled.div`
   display: flex;
@@ -29,26 +31,21 @@ const Content = styled.div`
   width: 100%;
 `;
 
-interface FormValues {
-  name: string;
-  sku: string;
-  category: string;
-  brand: string;
-  sellingPrice: string;
-  costPrice: string;
-  currentStock: string;
-  minimumStock: string;
-}
-
-const initialValues: FormValues = {
+const initialValues: Product = {
   name: "",
-  sku: "",
+  expiryDate: 0,
+  batchNumber: "",
   category: "",
-  brand: "",
-  sellingPrice: "",
-  costPrice: "",
-  currentStock: "",
-  minimumStock: "",
+  manufacturer: "",
+  mrp: 0,
+  rate: 0,
+  amount: 0,
+  discount:0,
+  sgst:0,
+  cgst:0,
+  hsn: 0,
+  currentStock: 0,
+  minimumStock: 0,
 };
 
 export default function AddProductPage() {
@@ -56,16 +53,13 @@ export default function AddProductPage() {
   const navigate = useNavigate();
   const isCreating = useAppSelector((state) => state.inventory.isCreating);
   const createError = useAppSelector((state) => state.inventory.createError);
-  const business = useAppSelector((state) => state.business.business);
-  const businessId = business.length > 0 ? business[0].id : "";
-  const [values, setValues] = useState<FormValues>(initialValues);
+  const [values, setValues] = useState<Product>(initialValues);
   const [fieldErrors, setFieldErrors] = useState<
-    Partial<Record<keyof FormValues, string>>
+    Partial<Record<keyof Product, string>>
   >({});
 
   const handleChange =
-    (field: keyof FormValues) =>
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+    (field: keyof Product) => (event: React.ChangeEvent<HTMLInputElement>) => {
       setValues((prev) => ({ ...prev, [field]: event.target.value }));
       if (createError) dispatch(clearCreateError());
     };
@@ -76,11 +70,11 @@ export default function AddProductPage() {
     const errors = validateFields(values, {
       name: (value) =>
         !isRequired(value) ? "Product Name is required." : undefined,
-      sellingPrice: (value) =>
+      mrp: (value) =>
         !isNonNegativeNumber(value)
           ? "Enter a valid selling price."
           : undefined,
-      costPrice: (value) =>
+      rate: (value) =>
         !isNonNegativeNumber(value) ? "Enter a valid cost price." : undefined,
       currentStock: (value) =>
         !isNonNegativeNumber(value)
@@ -98,15 +92,20 @@ export default function AddProductPage() {
 
     const result = await dispatch(
       createProduct({
-        businessId,
         name: values.name,
-        sku: values.sku || undefined,
-        category: values.category || undefined,
-        brand: values.brand || undefined,
-        sellingPrice: Number(values.sellingPrice),
-        costPrice: Number(values.costPrice),
+        mrp: Number(values.mrp),
+        rate: Number(values.rate),
         currentStock: Number(values.currentStock),
         minimumStock: Number(values.minimumStock),
+        expiryDate: formatDate(values.expiryDate),
+        manufacturer: values.manufacturer || '',
+        batchNumber: values.batchNumber || '',
+        hsn: Number(values.hsn) || 0,
+        amount: Number(values.amount) || 0,
+        discount: Number(values.discount) || 0,
+        sgst: Number(values.sgst) || 0,
+        cgst: Number(values.cgst) || 0,
+        status: 'NEW'
       }),
     );
     if (createProduct.fulfilled.match(result)) {
@@ -133,7 +132,7 @@ export default function AddProductPage() {
           >
             <Input
               id="name"
-              placeholder="Wireless Mechanical Keyboard"
+              placeholder="name"
               value={values.name}
               onChange={handleChange("name")}
               $hasError={!!fieldErrors.name}
@@ -141,36 +140,28 @@ export default function AddProductPage() {
           </FormField>
 
           <FieldRow>
-            <FormField
-              label="Selling Price"
-              htmlFor="sellingPrice"
-              error={fieldErrors.sellingPrice}
-            >
+            <FormField label="MRP." htmlFor="mrp" error={fieldErrors.mrp}>
               <Input
-                id="sellingPrice"
+                id="mrp"
                 type="number"
                 min="0"
                 step="0.01"
                 placeholder="0.00"
-                value={values.sellingPrice}
-                onChange={handleChange("sellingPrice")}
-                $hasError={!!fieldErrors.sellingPrice}
+                value={values.mrp}
+                onChange={handleChange("mrp")}
+                $hasError={!!fieldErrors.mrp}
               />
             </FormField>
-            <FormField
-              label="Cost Price"
-              htmlFor="costPrice"
-              error={fieldErrors.costPrice}
-            >
+            <FormField label="Rate" htmlFor="rate" error={fieldErrors.rate}>
               <Input
-                id="costPrice"
+                id="rate"
                 type="number"
                 min="0"
                 step="0.01"
                 placeholder="0.00"
-                value={values.costPrice}
-                onChange={handleChange("costPrice")}
-                $hasError={!!fieldErrors.costPrice}
+                value={values.rate}
+                onChange={handleChange("rate")}
+                $hasError={!!fieldErrors.rate}
               />
             </FormField>
           </FieldRow>
@@ -209,37 +200,88 @@ export default function AddProductPage() {
               />
             </FormField>
           </FieldRow>
+
+            <FormField
+              label="Expriy Date"
+              htmlFor="expiryDate"
+              error={fieldErrors.expiryDate}
+            >
+              <Input
+                id="expiryDate"
+                type="date"
+                value={values.expiryDate}
+                onChange={handleChange("expiryDate")}
+                $hasError={!!fieldErrors.expiryDate}
+              />
+            </FormField>
         </FieldStack>
 
         <Divider>Optional Details</Divider>
 
         <FieldStack>
+          <FormField label="Manufacturer" htmlFor="manufacturer">
+            <Input
+              id="manufacturer"
+              placeholder="ABC Pvt. Ltd."
+              value={values.manufacturer}
+              onChange={handleChange("manufacturer")}
+            />
+          </FormField>
           <FieldRow>
-            <FormField label="SKU" htmlFor="sku">
+            <FormField label="Batch No." htmlFor="batchNumber">
               <Input
-                id="sku"
+                id="batchNumber"
                 placeholder="WMK-2024-BLK"
-                value={values.sku}
-                onChange={handleChange("sku")}
+                value={values.batchNumber}
+                onChange={handleChange("batchNumber")}
               />
             </FormField>
-            <FormField label="Category" htmlFor="category">
+            <FormField label="HSN" htmlFor="hsn">
               <Input
-                id="category"
-                placeholder="Electronics"
-                value={values.category}
-                onChange={handleChange("category")}
+                id="hsn"
+                placeholder="30000979"
+                value={values.hsn}
+                onChange={handleChange("hsn")}
               />
             </FormField>
           </FieldRow>
-          <FormField label="Brand" htmlFor="brand">
-            <Input
-              id="brand"
-              placeholder="Logitech"
-              value={values.brand}
-              onChange={handleChange("brand")}
-            />
-          </FormField>
+
+          <FieldRow>
+            <FormField label="Total Amt." htmlFor="amount">
+              <Input
+                id="amount"
+                placeholder="0.00"
+                value={values.amount}
+                onChange={handleChange("amount")}
+              />
+            </FormField>
+            <FormField label="Discount" htmlFor="discount">
+              <Input
+                id="discount"
+                placeholder="0.00"
+                value={values.discount}
+                onChange={handleChange("discount")}
+              />
+            </FormField>
+          </FieldRow>
+          <FieldRow>
+            <FormField label="SGST" htmlFor="sgst">
+              <Input
+                id="sgst"
+                placeholder="0.00"
+                value={values.sgst}
+                onChange={handleChange("sgst")}
+              />
+            </FormField>
+            <FormField label="CGST" htmlFor="cgst">
+              <Input
+                id="cgst"
+                placeholder="0.00"
+                value={values.cgst}
+                onChange={handleChange("cgst")}
+              />
+            </FormField>
+          </FieldRow>
         </FieldStack>
 
         <FormActions>

@@ -88,8 +88,9 @@ export function TransactionHistoryTable({ transactions }: TransactionHistoryTabl
                   {getTransactionLabel(transaction.type)}
                 </StatusBadge>
               </Td>
-              <QuantityCell $align="right" $positive={transaction.quantity > 0}>
-                {formatSignedQuantity(transaction.quantity)}
+              <QuantityCell $align="right" $positive={Number(transaction.newStock) > Number(transaction.previousStock)}>
+                {/* {formatSignedQuantity(transaction.quantity)} */}
+                {Number(transaction.newStock) > Number(transaction.previousStock) ? `+${transaction.quantity}` : `-${transaction.quantity}`}
               </QuantityCell>
               <Td $align="right">{transaction.previousStock}</Td>
               <Td $align="right">{transaction.newStock}</Td>

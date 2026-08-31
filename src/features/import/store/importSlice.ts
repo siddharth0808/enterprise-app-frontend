@@ -32,7 +32,7 @@ interface ImportState {
 
   confirmStatus: "idle" | "loading" | "succeeded" | "failed";
   confirmError: string | null;
-  result: ImportResultData | null;
+  result: ImportResultData;
 
   historyStatus: "idle" | "loading" | "succeeded" | "failed";
   historyError: string | null;
@@ -62,7 +62,13 @@ const initialState: ImportState = {
   analyzeError: null,
   confirmStatus: "idle",
   confirmError: null,
-  result: null,
+  result: {
+    existingProductsUpdated:0,
+    newProductsCreated:0,
+    productsProcessed:0,
+    status:'ideal',
+    totalUnitsAdded:0
+  },
   historyStatus: "idle",
   historyError: null,
   history: [],
@@ -316,7 +322,12 @@ const importSlice = createSlice({
       })
       .addCase(confirmImport.fulfilled, (state, action) => {
         state.confirmStatus = "succeeded";
-        state.result = action.payload;
+        state.result.status = 'success';
+        state.result.existingProductsUpdated =  action.payload.filter((e:any)=> e.status === 'EXISTING').length;
+        state.result.newProductsCreated =  action.payload.filter((e:any)=> e.status === 'NEW').length;
+        state.result.productsProcessed =  action.payload.length;
+        state.result.totalUnitsAdded =  action.payload.length
+
       })
       .addCase(confirmImport.rejected, (state, action) => {
         state.confirmStatus = "failed";

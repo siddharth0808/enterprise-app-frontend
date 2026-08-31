@@ -132,7 +132,7 @@ export default function AdjustStockPage() {
     const result = await dispatch(
       createTransaction({
         businessId,
-        productId: product.id,
+        productId: product.id  || '',
         payload: {
           type,
           quantity: Math.abs(Number(values.quantity)),
@@ -158,7 +158,7 @@ export default function AdjustStockPage() {
           <ProductSummary>
             <div>
               <ProductName>{product.name}</ProductName>
-              <ProductMeta>SKU: {product.sku || '—'}</ProductMeta>
+              <ProductMeta>SKU: {product.batchNumber || '—'}</ProductMeta>
             </div>
             <CurrentStockBlock>
               <CurrentStockLabel>Current Stock</CurrentStockLabel>

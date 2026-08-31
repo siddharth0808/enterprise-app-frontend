@@ -76,7 +76,7 @@ export default function ProductDetailsPage() {
     <Content>
       <PageHeader
         title="Product Details"
-        subtitle={product.sku ? `${product.sku} — ${product.name}` : product.name}
+        subtitle={product.batchNumber ? `${product.batchNumber} — ${product.name}` : product.name}
         onBack={() => navigate('/inventory')}
         action={
           <HeaderActions>
@@ -106,21 +106,29 @@ export default function ProductDetailsPage() {
               <InfoValue>{product.name}</InfoValue>
             </InfoRow>
             <InfoRow>
-              <InfoLabel>SKU</InfoLabel>
-              <InfoValue>{product.sku || '—'}</InfoValue>
+              <InfoLabel>Batch No.</InfoLabel>
+              <InfoValue>{product.batchNumber || '—'}</InfoValue>
             </InfoRow>
             {/* <InfoRow>
               <InfoLabel>Barcode</InfoLabel>
               <InfoValue>{product.barcode || '—'}</InfoValue>
             </InfoRow> */}
             <InfoRow>
-              <InfoLabel>Category</InfoLabel>
-              <InfoValue>{product.category || '—'}</InfoValue>
+              <InfoLabel>HSN</InfoLabel>
+              <InfoValue>{product.hsn || '—'}</InfoValue>
             </InfoRow>
             <InfoRow>
               <InfoLabel>Brand</InfoLabel>
-              <InfoValue>{product.brand || '—'}</InfoValue>
+              <InfoValue>{product.manufacturer || '—'}</InfoValue>
             </InfoRow>
+            <InfoRow>
+              <InfoLabel>Total Amt.</InfoLabel>
+              <InfoValue>{formatCurrency(product.amount || 0) || '—'}</InfoValue>
+            </InfoRow>
+            <InfoRow>
+                <InfoLabel>Expiry Date</InfoLabel>
+                <InfoValue>{product.expiryDate  ? formatDate(new Date(product.expiryDate).toISOString()) : '—'}</InfoValue>
+              </InfoRow>
             <InfoRow>
                 <InfoLabel>Created Date</InfoLabel>
                 <InfoValue>{product.createdAt ? formatDate(product.createdAt) : '—'}</InfoValue>
@@ -154,16 +162,16 @@ export default function ProductDetailsPage() {
             <DetailCardTitle>Pricing &amp; Value</DetailCardTitle>
             <StatGrid>
               <StatBlock>
-                <StatLabel>Selling Price</StatLabel>
-                <StatValue>{formatCurrency(product.sellingPrice)}</StatValue>
+                <StatLabel>MRP.</StatLabel>
+                <StatValue>{formatCurrency(product.mrp)}</StatValue>
               </StatBlock>
               <StatBlock>
-                <StatLabel>Cost Price</StatLabel>
-                <StatValue>{formatCurrency(product.costPrice)}</StatValue>
+                <StatLabel>Rate</StatLabel>
+                <StatValue>{formatCurrency(product.rate)}</StatValue>
               </StatBlock>
               <StatBlock>
-                <StatLabel>Profit</StatLabel>
-                <StatValue>{formatCurrency(product.sellingPrice - product.costPrice)}</StatValue>
+                <StatLabel>Margin</StatLabel>
+                <StatValue>{formatCurrency(product.mrp - product.rate)}</StatValue>
               </StatBlock>
             </StatGrid>
           </DetailCard>

@@ -35,8 +35,8 @@ export const createTransaction = createAsyncThunk(
   ) => {
     try {
       const response = await transactionRepository.createTransaction(businessId,productId, payload);
-      dispatch(stockAdjusted({ productId, newStock: response.product.currentStock }));
-      return { productId, transaction: response.transaction };
+      dispatch(stockAdjusted({ productId, newStock: response.newStock }));
+      return { productId, transaction: response };
     } catch (error) {
       return rejectWithValue(error instanceof Error ? error.message : 'Failed to save the adjustment');
     }

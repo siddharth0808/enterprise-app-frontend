@@ -104,7 +104,7 @@ export function ProductCardList({ products }: ProductCardListProps) {
               <NameBlock>
                 <Name>{product.name}</Name>
                 <Meta>
-                  {[product.sku, product.category, product.brand].filter(Boolean).join(' · ') || '—'}
+                  {[product.batchNumber, product.category, product.manufacturer].filter(Boolean).join(' · ') || '—'}
                 </Meta>
               </NameBlock>
               <BadgeRow>
@@ -125,11 +125,11 @@ export function ProductCardList({ products }: ProductCardListProps) {
             <DetailsGrid>
               <DetailItem>
                 <DetailLabel>Selling Price</DetailLabel>
-                <DetailValue>{formatCurrency(product.sellingPrice)}</DetailValue>
+                <DetailValue>{formatCurrency(product.mrp)}</DetailValue>
               </DetailItem>
               <DetailItem>
                 <DetailLabel>Cost Price</DetailLabel>
-                <DetailValue>{formatCurrency(product.costPrice)}</DetailValue>
+                <DetailValue>{formatCurrency(product.rate)}</DetailValue>
               </DetailItem>
               <DetailItem>
                 <DetailLabel>Current Stock</DetailLabel>

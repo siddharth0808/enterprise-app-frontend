@@ -1,16 +1,22 @@
 export interface Product {
-  id: string;
+  id?: string;
   name: string;
-  sku?: string;
-  barcode?: string;
+  batchNumber?: string;
+  hsn?: number;
   category?: string;
-  brand?: string;
-  sellingPrice: number;
-  costPrice: number;
+  manufacturer?: string;
+  mrp: number;
+  rate: number;
+  amount?: number;
+  discount?:number;
   currentStock: number;
   minimumStock: number;
+  expiryDate: any;
+  sgst?:number;
+  cgst?:number;
   createdAt?: string;
   updatedAt?: string;
+  status?: string;
 }
 
 export type StockStatus = 'in-stock' | 'low-stock' | 'out-of-stock';

@@ -197,7 +197,7 @@ export function ImportFailure({ result, onViewInventory, onReviewFailedItems }: 
 
         {showDetails && (
           <FailedItemsList>
-            {result.failedItems.map((item) => (
+            {result.failedItems.map((item:any) => (
               <FailedItemRow key={item.id}>
                 <FailedItemName>{item.name}</FailedItemName>
                 <FailedItemReason>{item.reason}</FailedItemReason>

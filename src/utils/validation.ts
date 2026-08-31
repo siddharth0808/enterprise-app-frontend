@@ -14,8 +14,8 @@ export function isValidPhone(value: string): boolean {
   return PHONE_PATTERN.test(value.trim());
 }
 
-export function isNonNegativeNumber(value: string): boolean {
-  if (value.trim() === '') return false;
+export function isNonNegativeNumber(value: any): boolean {
+  // if (value.trim() === '') return false;
   const parsed = Number(value);
   return Number.isFinite(parsed) && parsed >= 0;
 }

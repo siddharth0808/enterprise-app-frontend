@@ -33,6 +33,7 @@ export interface InventoryTransaction {
   id: string;
   productId: string;
   type: TransactionType;
+  businessId:string;
   /** Signed - positive for additions (Stock In/Return), negative for reductions (Stock Out/Damage). */
   quantity: number;
   previousStock: number;

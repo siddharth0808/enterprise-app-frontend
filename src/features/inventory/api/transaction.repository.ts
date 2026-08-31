@@ -18,8 +18,8 @@ export function createTransaction(
   businessId:string,
   productId: string,
   payload: CreateTransactionRequest,
-): Promise<CreateTransactionResponse> {
-  return apiRequest<CreateTransactionResponse>(
+): Promise<InventoryTransaction> {
+  return apiRequest<InventoryTransaction>(
     `/inventory/${businessId}/${productId}/transactions`,
     {
       method: "POST",

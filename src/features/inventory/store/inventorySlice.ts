@@ -52,7 +52,7 @@ export const fetchProductById = createAsyncThunk(
 
 export const createProduct = createAsyncThunk(
   'inventory/createProduct',
-  async (payload: CreateProductRequest, { rejectWithValue }) => {
+  async (payload: Product, { rejectWithValue }) => {
     try {
       return await productRepository.createProduct(payload);
     } catch (error) {

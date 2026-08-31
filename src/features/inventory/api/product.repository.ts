@@ -1,11 +1,11 @@
 import { apiRequest } from '../../../services/api/apiClient';
-import type { CreateProductRequest, Product, UpdateProductRequest } from '../types/product.types';
+import type {  Product, UpdateProductRequest } from '../types/product.types';
 
 export function getProducts(): Promise<Product[]> {
   return apiRequest<Product[]>(`/products`);
 }
 
-export function createProduct(payload: CreateProductRequest): Promise<Product> {
+export function createProduct(payload: Product): Promise<Product> {
   return apiRequest<Product>('/products', { method: 'POST', body: payload });
 }
 

@@ -1,11 +1,11 @@
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import type { Product } from '../types/product.types';
-import { StatusBadge } from '../../../components/common/StatusBadge';
-import { ActionsMenu } from '../../../components/common/ActionsMenu';
-import { formatCurrency } from '../../../utils/formatters';
-import { getStockStatusMeta } from '../utils/stockStatus';
-import { media } from '../../../styles/breakpoints';
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import type { Product } from "../types/product.types";
+import { StatusBadge } from "../../../components/common/StatusBadge";
+import { ActionsMenu } from "../../../components/common/ActionsMenu";
+import { formatCurrency, formatDate } from "../../../utils/formatters";
+import { getStockStatusMeta } from "../utils/stockStatus";
+import { media } from "../../../styles/breakpoints";
 
 const TableWrapper = styled.div`
   width: 100%;
@@ -31,9 +31,9 @@ const Thead = styled.thead`
   background: ${({ theme }) => theme.colors.background};
 `;
 
-const Th = styled.th<{ $align?: 'left' | 'right' }>`
+const Th = styled.th<{ $align?: "left" | "right" }>`
   padding: ${({ theme }) => theme.spacing(3)} ${({ theme }) => theme.spacing(6)};
-  text-align: ${({ $align = 'left' }) => $align};
+  text-align: ${({ $align = "left" }) => $align};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semibold};
   color: ${({ theme }) => theme.colors.textSecondary};
@@ -55,9 +55,9 @@ const Tr = styled.tr`
   }
 `;
 
-const Td = styled.td<{ $align?: 'left' | 'right' }>`
+const Td = styled.td<{ $align?: "left" | "right" }>`
   padding: ${({ theme }) => theme.spacing(4)} ${({ theme }) => theme.spacing(6)};
-  text-align: ${({ $align = 'left' }) => $align};
+  text-align: ${({ $align = "left" }) => $align};
   font-size: ${({ theme }) => theme.font.size.base};
   color: ${({ theme }) => theme.colors.textSecondary};
   white-space: nowrap;
@@ -88,40 +88,67 @@ export function ProductTable({ products }: ProductTableProps) {
       <Table>
         <Thead>
           <tr>
+            <Th>Status</Th>
             <Th>Product</Th>
-            <Th>SKU</Th>
-            <Th>Category</Th>
-            <Th $align="right">Selling Price</Th>
-            <Th $align="right">Cost Price</Th>
+            <Th>Batch No.</Th>
+            <Th $align="right">MRP.</Th>
+            <Th $align="right">RATE</Th>
             <Th $align="right">Stock</Th>
             <Th $align="right">Min Stock</Th>
-            <Th>Status</Th>
+            <Th $align="right">Expiry Date</Th>
             <Th $align="right">Actions</Th>
           </tr>
         </Thead>
         <tbody>
           {products.map((product) => {
-            const statusMeta = getStockStatusMeta(product.currentStock, product.minimumStock);
+            const statusMeta = getStockStatusMeta(
+              product.currentStock,
+              product.minimumStock,
+            );
             return (
-              <Tr key={product.id} onClick={() => navigate(`/products/${product.id}`)}>
+              <Tr
+                key={product.id}
+                onClick={() => navigate(`/products/${product.id}`)}
+              >
+                <Td>
+                  <StatusBadge tone={statusMeta.tone}>
+                    {statusMeta.label}
+                  </StatusBadge>
+                </Td>
                 <ProductName>{product.name}</ProductName>
-                <Td>{product.sku || '—'}</Td>
-                <Td>{product.category || '—'}</Td>
-                <StrongPrice $align="right">{formatCurrency(product.sellingPrice)}</StrongPrice>
-                <Td $align="right">{formatCurrency(product.costPrice)}</Td>
+                <Td>{product.batchNumber || "—"}</Td>
+                <StrongPrice $align="right">
+                  {formatCurrency(product.mrp)}
+                </StrongPrice>
+                <Td $align="right">{formatCurrency(product.rate)}</Td>
                 <Td $align="right">{product.currentStock}</Td>
                 <Td $align="right">{product.minimumStock}</Td>
-                <Td>
-                  <StatusBadge tone={statusMeta.tone}>{statusMeta.label}</StatusBadge>
+                <Td $align="right">
+                  {formatDate(new Date(product.expiryDate).toISOString())}
                 </Td>
                 <ActionsCell onClick={(event) => event.stopPropagation()}>
                   <ActionsMenu
                     label={`Actions for ${product.name}`}
                     items={[
-                      { label: 'View Details', onSelect: () => navigate(`/products/${product.id}`) },
-                      { label: 'Adjust Stock', onSelect: () => navigate(`/products/${product.id}/adjust-stock`) },
-                      { label: 'View History', onSelect: () => navigate(`/products/${product.id}/history`) },
-                      { label: 'Edit Product', onSelect: () => navigate(`/products/${product.id}/edit`) },
+                      {
+                        label: "View Details",
+                        onSelect: () => navigate(`/products/${product.id}`),
+                      },
+                      {
+                        label: "Adjust Stock",
+                        onSelect: () =>
+                          navigate(`/products/${product.id}/adjust-stock`),
+                      },
+                      {
+                        label: "View History",
+                        onSelect: () =>
+                          navigate(`/products/${product.id}/history`),
+                      },
+                      {
+                        label: "Edit Product",
+                        onSelect: () =>
+                          navigate(`/products/${product.id}/edit`),
+                      },
                     ]}
                   />
                 </ActionsCell>

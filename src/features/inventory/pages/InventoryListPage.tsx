@@ -61,7 +61,7 @@ export default function InventoryListPage() {
     return products.filter((product) => {
       const matchesQuery =
         !trimmed ||
-        [product.name, product.sku, product.brand, product.category]
+        [product.name, product.batchNumber, product.manufacturer, product.category]
           .filter(Boolean)
           .some((field) => field!.toLowerCase().includes(trimmed));
 

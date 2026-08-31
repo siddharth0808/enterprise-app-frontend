@@ -13,6 +13,7 @@ import type {
   InvoiceProducts,
   UploadInvoice,
 } from '../types/import.types';
+import type { Product } from '../../inventory/types/product.types';
 
 // A dedicated multipart POST helper, kept local to this feature: the
 // invoice file upload needs `multipart/form-data`, which the shared
@@ -75,8 +76,8 @@ export function getInvoiceReview(invoiceId: string): Promise<Invoice> {
 //   return postMultipart<AnalyzeInvoiceResult>('/imports/analyze', formData);
 // }
 
-export function confirmImport(payload: InvoiceProducts[]): Promise<ImportResultData> {
-  return apiRequest<ImportResultData>(`/products/import`, {
+export function confirmImport(payload: InvoiceProducts[]): Promise<Product[]> {
+  return apiRequest<Product[]>(`/products/import`, {
     method: 'POST',
     body: payload,
   });

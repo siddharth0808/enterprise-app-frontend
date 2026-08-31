@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Button } from '../../../components/common/Button';
-import type { ImportResultData } from '../types/import.types';
+import type { ImportResultData, Invoice } from '../types/import.types';
 
 const Wrapper = styled.div`
   display: flex;
@@ -134,11 +134,12 @@ const Actions = styled.div`
 
 interface ImportSuccessProps {
   result: ImportResultData;
+  invoice:Invoice
   onViewInventory: () => void;
   onViewImportDetails: () => void;
 }
 
-export function ImportSuccess({ result, onViewInventory, onViewImportDetails }: ImportSuccessProps) {
+export function ImportSuccess({ result,invoice, onViewInventory, onViewImportDetails }: ImportSuccessProps) {
   return (
     <Wrapper>
       <Card>
@@ -157,11 +158,11 @@ export function ImportSuccess({ result, onViewInventory, onViewImportDetails }: 
         <MetaRow>
           <MetaItem>
             <MetaLabel>Invoice</MetaLabel>
-            <MetaValue>{result.invoice.invoiceNumber}</MetaValue>
+            <MetaValue>{invoice.invoiceNumber}</MetaValue>
           </MetaItem>
           <MetaItem>
             <MetaLabel>Distributor</MetaLabel>
-            <MetaValue>{result.invoice.distributor}</MetaValue>
+            <MetaValue>{invoice.supplier.name}</MetaValue>
           </MetaItem>
         </MetaRow>
 
@@ -186,9 +187,6 @@ export function ImportSuccess({ result, onViewInventory, onViewImportDetails }: 
         </StatsPanel>
 
         <Actions>
-          <Button type="button" $variant="secondary" onClick={onViewImportDetails}>
-            View Import Details
-          </Button>
           <Button type="button" onClick={onViewInventory}>
             View Inventory
           </Button>
