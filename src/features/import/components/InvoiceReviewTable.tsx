@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import type { InvoiceProducts } from "../types/import.types";
 import { InvoiceReviewRow } from "./InvoiceReviewRow";
+import { media } from "../../../styles/breakpoints";
 
 const TableWrapper = styled.div`
   width: 100%;
@@ -10,6 +11,10 @@ const TableWrapper = styled.div`
   box-shadow: ${({ theme }) => theme.shadow.card};
   overflow: hidden;
   overflow-x: auto;
+
+   ${() => media.tabletDown`
+      display: none;
+    `}
 `;
 
 const Table = styled.table`
@@ -58,14 +63,6 @@ export function InvoiceReviewTable({
       <Table>
         <Thead>
           <tr>
-            {/* <Th>
-              <input
-                type="checkbox"
-                checked={allSelected}
-                onChange={(event) => onToggleSelectAll(event.target.checked)}
-                aria-label="Select all products"
-              />
-            </Th> */}
             <Th>Status</Th>
             <Th>Product</Th>
             <Th $align="right">Quantity</Th>
