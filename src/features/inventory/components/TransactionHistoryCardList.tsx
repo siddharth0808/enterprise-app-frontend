@@ -69,8 +69,8 @@ export function TransactionHistoryCardList({ transactions }: TransactionHistoryC
             <StatusBadge tone={getTransactionTone(transaction.type)}>
               {getTransactionLabel(transaction.type)}
             </StatusBadge>
-            <QuantityText $positive={transaction.quantity > 0}>
-              {formatSignedQuantity(transaction.quantity)}
+            <QuantityText $positive={Number(transaction.newStock) > Number(transaction.previousStock)}>
+                {Number(transaction.newStock) > Number(transaction.previousStock) ? `+${transaction.quantity}` : `-${transaction.quantity}`}
             </QuantityText>
           </TopRow>
           <StockRow>
