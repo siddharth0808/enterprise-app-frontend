@@ -28,7 +28,7 @@ export interface DetectedProduct {
   rate: number;
   mrp: number;
   amount: number;
-   
+  expiryDate:any
 }
 
 export interface AnalyzeInvoiceResult {

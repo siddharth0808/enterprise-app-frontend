@@ -11,6 +11,7 @@ export interface DetectedProductFormValues {
   rate: string;
   mrp: string;
   amount: string;
+  expiryDate:any
 }
 
 interface NewProductFormProps {
@@ -117,6 +118,17 @@ export function NewProductForm({
             $hasError={!!errors.amount}
           />
         </FormField>
+         <FormField
+              label="Expriy Date"
+              htmlFor="expiryDate"
+            >
+              <Input
+                id="expiryDate"
+                type="date"
+                value={values.expiryDate}
+                onChange={handleChange("expiryDate")}
+              />
+            </FormField>
       </FieldRow>
     </FieldStack>
   );

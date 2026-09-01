@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import type { InvoiceProducts } from "../types/import.types";
 import { ProductMatchBadge } from "./ProductMatchBadge";
-import { expiryDate, formatCurrency } from "../../../utils/formatters";
+import { formatCurrency, formatDate } from "../../../utils/formatters";
 import { EditIcon, RemoveIcon } from "../../../components/common/Icons/Icons";
 
 const Row = styled.tr`
@@ -99,10 +99,11 @@ export function InvoiceReviewRow({
       <Td $align="right">{product.currentQuantity}</Td>
       <Td $align="right">{product.currentQuantity + product.quantity}</Td>
 
-      <Td $align="right">{formatCurrency(product.rate)}</Td>
+      <Td $align="right">{product.rate ? formatCurrency(product.rate) : "—"}</Td>
       <Td $align="right">{product.mrp ? formatCurrency(product.mrp) : "—"}</Td>
-      <Td $align="right">{expiryDate(product.expiryDate)}</Td>
-      <Td $align="right">{formatCurrency(product.amount)}</Td>
+
+      <Td $align="right">{product.expiryDate ? formatDate(new Date(product.expiryDate).toISOString()): "—"}</Td>
+      <Td $align="right">{product.amount ? formatCurrency(product.amount): "—"}</Td>
       <ActionsCell onClick={(event) => event.stopPropagation()}>
         <RowActions className="row-actions">
           <IconButton

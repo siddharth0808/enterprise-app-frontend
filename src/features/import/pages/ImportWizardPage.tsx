@@ -422,7 +422,7 @@ export default function ImportWizardPage() {
             invoice={importState.invoice}
             onViewInventory={() => {
               dispatch(resetImportWorkflow());
-              navigate('/inventory');
+              navigate('/inventory', {replace: true});
             }}
             onViewImportDetails={() => {
               dispatch(resetImportWorkflow());
