@@ -10,7 +10,10 @@ import {
   EditIcon,
   EyeIcon,
   HistoryIcon,
+  RemoveIcon,
 } from "../../../components/common/Icons/Icons";
+import { useAppDispatch } from "../../../app/store/hooks";
+import { deleteProduct } from "../store/inventorySlice";
 
 const TableWrapper = styled.div`
   width: 100%;
@@ -142,6 +145,7 @@ interface ProductTableProps {
 
 export function ProductTable({ products }: ProductTableProps) {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   return (
     <TableWrapper>
@@ -235,6 +239,16 @@ export function ProductTable({ products }: ProductTableProps) {
                       }
                     >
                       <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      type="button"
+                      title="Remove Product"
+                      aria-label={`Remove ${product.name}`}
+                      onClick={() =>
+                        dispatch(deleteProduct({ productId: product.id || "" }))
+                      }
+                    >
+                      <RemoveIcon />
                     </IconButton>
                   </RowActions>
                 </ActionsCell>

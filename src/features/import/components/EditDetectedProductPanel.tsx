@@ -90,7 +90,9 @@ function toFormValues(product: InvoiceProducts): any {
     rate: String(product.rate),
     mrp: String(product.mrp),
     amount: String(product.amount),
-    expiryDate: product?.expiryDate ? new Date(product?.expiryDate || '').toISOString().split('T')[0] : ''
+    expiryDate: product?.expiryDate ? new Date(product?.expiryDate || '').toISOString().split('T')[0] : '',
+    batchNumber: product?.batchNumber || '',
+    manufacturer: product?.manufacturer || '',
   };
 }
 
@@ -114,6 +116,7 @@ export function EditDetectedProductPanel({
     setValues((prev) => ({ ...prev, [field]: value }));
   };
 
+  const isExisting =  product.status  === 'EXISTING';
   const handleSave = () => {
     const validationErrors = validateFields(values, {
       name: (value) => (!isRequired(value) ? 'Product Name is required.' : undefined),
@@ -131,7 +134,9 @@ export function EditDetectedProductPanel({
       rate: Number(values.rate),
       mrp: Number(values.mrp),
       amount: Number(values.amount),
-      expiryDate: new Date(values.expiryDate).valueOf()
+      expiryDate: new Date(values.expiryDate).valueOf(),
+      batchNumber: values.batchNumber,
+      manufacturer: values.manufacturer,
     });
   };
 
@@ -158,7 +163,7 @@ export function EditDetectedProductPanel({
             values={values}
             errors={errors}
             onChange={handleChange}
-            disableQuantity={false}
+            disableQuantity={isExisting}
           />
         </Body>
         <Footer>
